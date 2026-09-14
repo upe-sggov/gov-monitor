@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radar INE por Área Governativa — SGGov · UPE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
+<style>
+:root{
+  --azul:#275673; --teal:#266B73; --verde:#1F735B; --dourado:#F2B705; --vermelho:#D02117;
+  --fundo:#F4F6F8; --cartao:#FFFFFF; --texto:#1E2A33; --texto2:#5B6B77; --linha:#E3E9EE;
+  --raio:12px; --sombra:0 1px 3px rgba(30,42,51,.08),0 4px 14px rgba(30,42,51,.05);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Lexend',Arial,sans-serif;background:var(--fundo);color:var(--texto);font-size:14px;line-height:1.55}
+.contentor{max-width:1180px;margin:0 auto;padding:0 20px 48px}
+a{color:var(--teal)}
+
+/* Cabeçalho institucional */
+.cabecalho{background:linear-gradient(100deg,var(--azul) 0%,var(--teal) 55%,var(--verde) 100%);color:#fff;border-bottom:4px solid var(--vermelho)}
+.cabecalho-inner{max-width:1180px;margin:0 auto;padding:20px 20px 0;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.logo-slot img{height:44px;width:auto;display:block}
+.cabecalho h1{font-size:21px;font-weight:600}
+.cabecalho .sub{font-size:12.5px;opacity:.85;font-weight:300;margin-top:2px}
+.selo-proto{margin-left:auto;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);padding:5px 12px;border-radius:20px;font-size:11.5px;letter-spacing:.4px}
+.separadores{max-width:1180px;margin:14px auto 0;padding:0 20px;display:flex;gap:4px;flex-wrap:wrap}
+.separador{background:rgba(255,255,255,.10);border:none;color:#fff;font:inherit;font-size:13px;padding:9px 18px;border-radius:10px 10px 0 0;cursor:pointer;opacity:.8}
+.separador.ativo{background:var(--fundo);color:var(--azul);font-weight:600;opacity:1}
+
+.faixa-demo{background:#FFF6DD;border:1px solid #EAD79A;color:#6B5A17;border-radius:var(--raio);padding:10px 16px;margin:18px 0 0;font-size:12.5px}
+
+/* KPI clicáveis */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:18px 0}
+.kpi{background:var(--cartao);border-radius:var(--raio);box-shadow:var(--sombra);padding:16px 18px;border-top:3px solid var(--teal);cursor:pointer;transition:transform .12s}
+.kpi:hover{transform:translateY(-2px);border-top-color:var(--dourado)}
+.kpi .rotulo{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--texto2)}
+.kpi .valor{font-size:26px;font-weight:700;margin-top:2px;color:var(--azul)}
+.kpi .nota{font-size:11.5px;color:var(--texto2)}
+.kpi .nota::after{content:" · ver detalhe";color:var(--teal)}
+
+/* Barra de pesquisa */
+.barra{background:var(--cartao);border-radius:var(--raio);box-shadow:var(--sombra);padding:14px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.barra input[type=search]{flex:1 1 260px;padding:9px 14px;border:1px solid var(--linha);border-radius:8px;font:inherit;background:#FBFCFD}
+.barra select, .caixa select, .caixa input[type=number]{padding:9px 10px;border:1px solid var(--linha);border-radius:8px;font:inherit;background:#FBFCFD;color:var(--texto)}
+.barra .limpar{background:none;border:none;color:var(--teal);font:inherit;cursor:pointer;text-decoration:underline;font-size:12.5px}
+
+h2.seccao{font-size:15px;font-weight:600;color:var(--azul);margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+h2.seccao::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--vermelho)}
+
+/* Cartões de área com ícone */
+.areas{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}
+.area-cartao{position:relative;overflow:hidden;background:var(--cartao);border:1px solid var(--linha);border-radius:12px;padding:14px;cursor:pointer;box-shadow:var(--sombra);display:flex;gap:12px;align-items:center;transition:all .15s}
+.area-cartao:hover{border-color:var(--teal);transform:translateY(-1px)}
+.area-cartao.ativa{border-color:var(--verde);background:#EFF7F3;box-shadow:inset 0 0 0 1px var(--verde)}
+.area-icone{flex:0 0 42px;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff}
+.area-icone svg{width:22px;height:22px}
+.area-cartao .nome{font-size:12.5px;font-weight:500;line-height:1.3}
+.area-cartao .conta{font-size:11px;color:var(--texto2)}
+.area-cartao .marca-agua{position:absolute;right:-14px;bottom:-16px;opacity:.06;width:84px;height:84px}
+
+/* Cartões de indicador */
+.grelha{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:12px}
+.cartao-ind{background:var(--cartao);border-radius:var(--raio);box-shadow:var(--sombra);overflow:hidden;display:flex;flex-direction:column}
+.cartao-topo{padding:10px 16px;color:#fff;display:flex;align-items:center;gap:10px}
+.cartao-topo svg{width:17px;height:17px;flex:0 0 auto}
+.cartao-topo .area-nome{font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.cartao-corpo{padding:12px 16px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cartao-corpo h3{font-size:13.5px;font-weight:600;line-height:1.4}
+.cartao-corpo .meta{font-size:11.5px;color:var(--texto2);display:flex;gap:12px;flex-wrap:wrap}
+.cartao-corpo .meta span::before{content:"· ";color:var(--dourado)}
+.spark{width:100%;height:44px;display:block}
+.spark polyline{fill:none;stroke-width:2}
+.spark .area-fill{opacity:.12;stroke:none}
+.badge-api{font-size:10.5px;border-radius:4px;padding:2px 8px;align-self:flex-start}
+.badge-api.ok{background:#E7F3EE;color:var(--verde);border:1px solid #BBDCCE}
+.badge-api.pendente{background:#FDF0EF;color:var(--vermelho);border:1px solid #F2C7C4}
+.acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.botao{font:inherit;font-size:12px;padding:7px 12px;border-radius:8px;border:1px solid var(--linha);background:#FBFCFD;color:var(--texto);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.botao.primario{background:var(--teal);border-color:var(--teal);color:#fff}
+.botao.dourado{background:#FDF6E0;border-color:#EAD79A;color:#6B5A17}
+.botao:hover{filter:brightness(.96)}
+.botao[disabled]{opacity:.45;cursor:not-allowed}
+
+/* Caixas genéricas (compostos, cruzamentos, painel) */
+.caixa{background:var(--cartao);border-radius:var(--raio);box-shadow:var(--sombra);padding:18px;margin-bottom:16px}
+.caixa h3{font-size:14px;font-weight:600;color:var(--azul);margin-bottom:10px}
+.caixa .ajuda{font-size:12px;color:var(--texto2);margin-bottom:12px}
+.linha-comp{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 10px;border:1px solid var(--linha);border-radius:8px;margin-bottom:8px;background:#FBFCFD}
+.linha-comp label{font-size:12.5px;flex:1 1 220px;display:flex;gap:8px;align-items:center}
+.linha-comp input[type=number]{width:74px}
+.linha-comp select{font-size:12px}
+.grafico-caixa{background:#FBFCFD;border:1px solid var(--linha);border-radius:10px;padding:14px;position:relative;margin-top:10px}
+.marca-demo{position:absolute;top:10px;right:12px;font-size:10px;letter-spacing:1px;color:#B9A24A;border:1px dashed #D9C87E;border-radius:4px;padding:1px 7px;background:#FFFBEB;z-index:2}
+.metodo{font-size:11.5px;color:var(--texto2);border-left:3px solid var(--dourado);padding:6px 10px;background:#FDFBF3;margin-top:10px;border-radius:0 6px 6px 0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.tile{background:var(--cartao);border-radius:var(--raio);box-shadow:var(--sombra);padding:14px 16px;position:relative}
+.tile h4{font-size:12.5px;font-weight:600;color:var(--azul);padding-right:26px;margin-bottom:6px}
+.tile .remover{position:absolute;top:10px;right:10px;background:#FDF0EF;border:1px solid #F2C7C4;color:var(--vermelho);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:12px}
+.vazio{border:2px dashed var(--linha);border-radius:var(--raio);padding:34px;text-align:center;color:var(--texto2);font-size:13px}
+
+/* Painel lateral e modais */
+.veu{position:fixed;inset:0;background:rgba(20,32,40,.55);display:none;z-index:40}
+.veu.aberto{display:block}
+.painel{position:fixed;top:0;right:0;height:100%;width:min(700px,100%);background:var(--cartao);z-index:50;transform:translateX(102%);transition:transform .25s ease;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.2)}
+.painel.aberto{transform:translateX(0)}
+.painel-topo{background:linear-gradient(100deg,var(--azul),var(--verde));color:#fff;padding:18px 22px;border-bottom:3px solid var(--vermelho);position:relative}
+.painel-topo h3{font-size:15px;font-weight:600;padding-right:36px}
+.painel-topo .sub{font-size:11.5px;opacity:.85;margin-top:3px}
+.fechar{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px}
+.painel-corpo{padding:18px 22px;overflow-y:auto;flex:1}
+.bloco{margin-bottom:18px}
+.bloco h4{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--texto2);margin-bottom:8px}
+.estado-api{font-size:12px;border-radius:8px;padding:10px 12px;margin-top:10px;display:none}
+.estado-api.info{display:block;background:#EEF4F8;border:1px solid #CBDCE8;color:var(--azul)}
+.estado-api.erro{display:block;background:#FDF0EF;border:1px solid #F2C7C4;color:var(--vermelho)}
+.estado-api.ok{display:block;background:#E7F3EE;border:1px solid #BBDCCE;color:var(--verde)}
+.ligacoes a{display:block;font-size:12.5px;margin:4px 0;word-break:break-all}
+table.dados{width:100%;border-collapse:collapse;font-size:12.5px}
+table.dados th{background:#EEF3F6;text-align:left;padding:7px 10px;font-weight:600;color:var(--azul);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
+.sem-resultados{background:var(--cartao);border-radius:var(--raio);box-shadow:var(--sombra);padding:30px;text-align:center;color:var(--texto2);display:none}
+.pagina{display:none}.pagina.ativa{display:block}
+
+.rodape{margin-top:34px;border-top:3px solid var(--vermelho);background:linear-gradient(100deg,var(--azul),var(--verde));color:#fff;font-size:11.5px}
+.rodape-inner{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;opacity:.95}
+@media(max-width:640px){.cabecalho h1{font-size:17px}.selo-proto{margin-left:0}}
+@media print{.barra,.acoes,.selo-proto,.separadores,.tile .remover{display:none}.cartao-ind,.tile,.caixa{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header class="cabecalho">
+  <div class="cabecalho-inner">
+    <div class="logo-slot">
+      <!-- Logótipo SGGov (pastilha branca) — substituir pelo base64 conforme a skill logo-sggov -->
+      <img src="data:image/png;base64,SUBSTITUIR_PELO_BASE64" alt="Secretaria-Geral do Governo" onerror="this.style.display='none'">
+    </div>
+    <div>
+      <h1>Radar INE por Área Governativa</h1>
+      <div class="sub">Indicadores e conjuntos de dados do Instituto Nacional de Estatística, organizados pelas 16 áreas governativas · SGGov — DSSD · Unidade de Pesquisa e Estatísticas</div>
+    </div>
+    <span class="selo-proto">PROTÓTIPO v0.2</span>
+  </div>
+  <nav class="separadores" id="separadores">
+    <button class="separador ativo" data-pag="explorar">Explorar</button>
+    <button class="separador" data-pag="compostos">Indicadores compostos</button>
+    <button class="separador" data-pag="cruzar">Cruzar informação</button>
+    <button class="separador" data-pag="painel-meu">O meu painel <span id="conta-tiles"></span></button>
+  </nav>
+</header>
+
+<main class="contentor">
+
+  <div class="faixa-demo">
+    <strong>Nota de demonstração:</strong> séries fictícias assinaladas com «DEMONSTRAÇÃO». A ligação à API do INE está ativa nos indicadores com código verificado (0008074 — taxa de criminalidade; 0004167 — população residente, ambos confirmados na documentação oficial da API). Os restantes códigos podem ser propostos automaticamente pelo script do catálogo oficial e validados antes de entrar em produção (ver README).
+  </div>
+
+  <section class="kpis" aria-label="Síntese do catálogo">
+    <div class="kpi" data-drill="indicadores"><div class="rotulo">Indicadores no catálogo</div><div class="valor" id="kpi-total">—</div><div class="nota">entradas configuradas</div></div>
+    <div class="kpi" data-drill="areas"><div class="rotulo">Áreas governativas</div><div class="valor" id="kpi-areas">—</div><div class="nota">cobertura por área</div></div>
+    <div class="kpi" data-drill="api"><div class="rotulo">Com API configurada</div><div class="valor" id="kpi-api">—</div><div class="nota">códigos INE verificados</div></div>
+    <div class="kpi" data-drill="recolha"><div class="rotulo">Última recolha</div><div class="valor" id="kpi-recolha" style="font-size:16px;line-height:2">—</div><div class="nota">GitHub Actions</div></div>
+  </section>
+
+  <!-- ===================== EXPLORAR ===================== -->
+  <section class="pagina ativa" id="pag-explorar">
+    <div class="barra" role="search">
+      <input type="search" id="pesquisa" placeholder="Pesquisar indicador, fonte ou unidade… (ex.: desemprego, habitação, ‰)">
+      <select id="filtro-area"><option value="">Todas as áreas</option></select>
+      <select id="filtro-period"><option value="">Qualquer periodicidade</option></select>
+      <select id="filtro-api"><option value="">API: todos</option><option value="sim">Só com API configurada</option><option value="nao">Só por configurar</option></select>
+      <button class="limpar" id="limpar">Limpar filtros</button>
+    </div>
+
+    <h2 class="seccao">Áreas governativas</h2>
+    <div class="areas" id="grelha-areas"></div>
+
+    <h2 class="seccao">Indicadores <span id="conta-resultados" style="font-weight:300;color:var(--texto2);font-size:12.5px"></span></h2>
+    <div class="grelha" id="grelha-indicadores"></div>
+    <div class="sem-resultados" id="sem-resultados">Nenhum indicador corresponde aos filtros aplicados.</div>
+  </section>
+
+  <!-- ===================== COMPOSTOS ===================== -->
+  <section class="pagina" id="pag-compostos">
+    <div class="caixa">
+      <h3>Construtor de indicadores compostos</h3>
+      <div class="ajuda">Selecione a área, escolha dois ou mais indicadores, atribua pesos e a polaridade (se o valor mais alto é favorável ou desfavorável). O índice é calculado por normalização mín.–máx. (0–100) sobre os períodos comuns, seguida de média ponderada — método alinhado com a prática de índices compostos (ex.: manual OCDE/JRC).</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <select id="comp-area"></select>
+        <input type="text" id="comp-nome" placeholder="Nome do índice (ex.: Índice de Pressão Habitacional)" style="flex:1 1 240px;padding:9px 12px;border:1px solid var(--linha);border-radius:8px;font:inherit;background:#FBFCFD">
+      </div>
+      <div id="comp-lista"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="botao primario" id="comp-calcular">Calcular índice</button>
+        <button class="botao dourado" id="comp-painel" disabled>Adicionar ao meu painel</button>
+        <button class="botao" id="comp-exportar" disabled>Exportar configuração (JSON)</button>
+      </div>
+      <div class="grafico-caixa" id="comp-caixa" style="display:none">
+        <span class="marca-demo" id="comp-demo">DEMONSTRAÇÃO</span>
+        <canvas id="comp-grafico" height="200"></canvas>
+      </div>
+      <div class="metodo" id="comp-metodo" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- ===================== CRUZAR ===================== -->
+  <section class="pagina" id="pag-cruzar">
+    <div class="caixa">
+      <h3>Cruzamento de dois indicadores</h3>
+      <div class="ajuda">Compara duas séries (eixos independentes) e cruza-as num diagrama de dispersão sobre os períodos comuns, com o coeficiente de correlação de Pearson. A correlação não implica causalidade — o valor serve apenas de sinalização exploratória.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <select id="cruz-a" style="flex:1 1 260px"></select>
+        <select id="cruz-b" style="flex:1 1 260px"></select>
+        <button class="botao primario" id="cruz-calcular">Cruzar</button>
+        <button class="botao dourado" id="cruz-painel" disabled>Adicionar ao meu painel</button>
+      </div>
+      <div class="grafico-caixa" id="cruz-caixa1" style="display:none">
+        <span class="marca-demo">DEMONSTRAÇÃO</span>
+        <canvas id="cruz-linhas" height="190"></canvas>
+      </div>
+      <div class="grafico-caixa" id="cruz-caixa2" style="display:none">
+        <span class="marca-demo">DEMONSTRAÇÃO</span>
+        <canvas id="cruz-dispersao" height="190"></canvas>
+      </div>
+      <div class="metodo" id="cruz-metodo" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- ===================== O MEU PAINEL ===================== -->
+  <section class="pagina" id="pag-painel-meu">
+    <div class="caixa">
+      <h3>O meu painel</h3>
+      <div class="ajuda">Monte o seu painel de controlo com indicadores («Adicionar ao painel» nos cartões), índices compostos e cruzamentos. A composição vive nesta sessão; use «Exportar» para guardar a configuração em JSON (pode ser registada no repositório, ex.: <code>data/paineis/gabinete-x.json</code>) e «Importar» para a repor.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="botao" id="painel-exportar">Exportar configuração</button>
+        <label class="botao" style="cursor:pointer">Importar configuração<input type="file" id="painel-importar" accept="application/json" style="display:none"></label>
+        <button class="botao" onclick="window.print()">Imprimir / PDF</button>
+      </div>
+    </div>
+    <div class="tiles" id="tiles"></div>
+    <div class="vazio" id="tiles-vazio">O painel está vazio. Adicione indicadores a partir do separador «Explorar», ou índices e cruzamentos a partir dos respetivos construtores.</div>
+  </section>
+
+</main>
+
+<!-- Painel lateral de detalhe do indicador -->
+<div class="veu" id="veu"></div>
+<aside class="painel" id="painel" aria-hidden="true">
+  <div class="painel-topo">
+    <h3 id="painel-titulo">—</h3>
+    <div class="sub" id="painel-sub"></div>
+    <button class="fechar" id="painel-fechar" aria-label="Fechar">✕</button>
+  </div>
+  <div class="painel-corpo">
+    <div class="bloco">
+      <h4>Visualização</h4>
+      <div class="grafico-caixa" style="margin-top:0">
+        <span class="marca-demo" id="marca-demo">DEMONSTRAÇÃO</span>
+        <canvas id="grafico" height="220"></canvas>
+      </div>
+      <div class="estado-api" id="estado-api"></div>
+    </div>
+    <div class="bloco">
+      <h4>Dados</h4>
+      <table class="dados"><thead><tr><th>Período</th><th>Valor</th></tr></thead><tbody id="tabela-corpo"></tbody></table>
+    </div>
+    <div class="bloco">
+      <h4>Acesso direto (INE)</h4>
+      <div class="ligacoes" id="ligacoes"></div>
+    </div>
+    <div class="bloco acoes" style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="botao primario" id="btn-live">Carregar dados reais via API</button>
+      <button class="botao dourado" id="btn-tile">Adicionar ao meu painel</button>
+      <button class="botao" id="btn-json">Descarregar JSON</button>
+    </div>
+  </div>
+</aside>
+
+<!-- Painel lateral de detalhe dos KPI -->
+<aside class="painel" id="drill" aria-hidden="true">
+  <div class="painel-topo">
+    <h3 id="drill-titulo">—</h3>
+    <div class="sub" id="drill-sub"></div>
+    <button class="fechar" id="drill-fechar" aria-label="Fechar">✕</button>
+  </div>
+  <div class="painel-corpo" id="drill-corpo"></div>
+</aside>
+
+<footer class="rodape">
+  <div class="rodape-inner">
+    <span>Fontes: INE — Base de Dados de Difusão (API JSON, acesso livre) · smi.ine.pt · dados.gov.pt</span>
+    <span>SGGov · Direção de Serviços de Suporte à Decisão · UPE — agosto de 2026</span>
+  </div>
+</footer>
+
+<script>
+/* Catálogo embebido — recurso quando data/catalogo.json não está acessível
+   (pré-visualização local). Em produção (GitHub Pages) o ficheiro prevalece. */
+const CATALOGO_EMBEBIDO = {
+  "versao": "0.2 — protótipo",
+  "atualizado": "2026-08-27",
+  "nota": "Catálogo de indicadores do Radar INE por Área Governativa. Campo 'varcd' = código do indicador na Base de Dados de Difusão do INE (obrigatório para recolha via API). Entradas com varcd null estão por configurar: obter o código em www.ine.pt > Base de Dados > Alterar condições de seleção > Códigos, e as dimensões em pindicaMeta.jsp. Só o indicador 0008074 tem código verificado (exemplo oficial da documentação da API do INE).",
+  "areas": [
+    {
+      "id": "mnegest",
+      "nome": "Estado e Negócios Estrangeiros"
+    },
+    {
+      "id": "mfin",
+      "nome": "Estado e Finanças"
+    },
+    {
+      "id": "mpres",
+      "nome": "Presidência"
+    },
+    {
+      "id": "madjre",
+      "nome": "Adjunto e Reforma do Estado"
+    },
+    {
+      "id": "mparl",
+      "nome": "Assuntos Parlamentares"
+    },
+    {
+      "id": "mecon",
+      "nome": "Economia e Coesão Territorial"
+    },
+    {
+      "id": "mdn",
+      "nome": "Defesa Nacional"
+    },
+    {
+      "id": "mai",
+      "nome": "Administração Interna"
+    },
+    {
+      "id": "mj",
+      "nome": "Justiça"
+    },
+    {
+      "id": "meduc",
+      "nome": "Educação, Ciência e Inovação"
+    },
+    {
+      "id": "msaude",
+      "nome": "Saúde"
+    },
+    {
+      "id": "minfra",
+      "nome": "Infraestruturas e Habitação"
+    },
+    {
+      "id": "mtsss",
+      "nome": "Trabalho, Solidariedade e Segurança Social"
+    },
+    {
+      "id": "mamb",
+      "nome": "Ambiente e Energia"
+    },
+    {
+      "id": "magri",
+      "nome": "Agricultura e Mar"
+    },
+    {
+      "id": "mcult",
+      "nome": "Cultura, Juventude e Desporto"
+    }
+  ],
+  "indicadores": [
+    {
+      "id": "criminalidade",
+      "area": "mj",
+      "nome": "Taxa de criminalidade (‰) por localização geográfica e categoria de crime",
+      "fonte": "DGPJ / INE",
+      "periodicidade": "Anual",
+      "unidade": "‰",
+      "varcd": "0008074",
+      "verificado": true,
+      "dims_exemplo": {
+        "Dim1": "S7A2015",
+        "Dim2": "200",
+        "Dim3": "3"
+      },
+      "nota_dims": "Dim1 = período (formato S7A{ano}); Dim2 = geografia (ex.: 11, 200 = R. A. Açores); Dim3 = categoria de crime (ex.: 3 = furto de veículo e em veículo motorizado). Fonte: documentação oficial da API BDD do INE."
+    },
+    {
+      "id": "tx-desemprego",
+      "area": "mtsss",
+      "nome": "Taxa de desemprego (Inquérito ao Emprego)",
+      "fonte": "INE — Inquérito ao Emprego",
+      "periodicidade": "Trimestral",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "ipc",
+      "area": "mfin",
+      "nome": "Índice de preços no consumidor — variação homóloga",
+      "fonte": "INE — IPC",
+      "periodicidade": "Mensal",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "pib-tvh",
+      "area": "mfin",
+      "nome": "PIB — taxa de variação homóloga (volume)",
+      "fonte": "INE — Contas Nacionais",
+      "periodicidade": "Trimestral",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "pop-residente",
+      "area": "mpres",
+      "nome": "População residente por local de residência, sexo e grupo etário",
+      "fonte": "INE — Estimativas anuais da população residente",
+      "periodicidade": "Anual",
+      "unidade": "N.º",
+      "varcd": "0004167",
+      "verificado": true,
+      "nota_dims": "Código verificado na documentação oficial do catálogo da API do INE (xml_indic.jsp). Sem dimensões obrigatórias: pindica.jsp?op=2&varcd=0004167&lang=PT devolve o período mais recente."
+    },
+    {
+      "id": "exportacoes",
+      "area": "mecon",
+      "nome": "Exportações de bens — valor",
+      "fonte": "INE — Comércio Internacional",
+      "periodicidade": "Mensal",
+      "unidade": "EUR",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "dormidas-turismo",
+      "area": "mecon",
+      "nome": "Dormidas em alojamentos turísticos",
+      "fonte": "INE — Estatísticas do Turismo",
+      "periodicidade": "Mensal",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "abandono-escolar",
+      "area": "meduc",
+      "nome": "Taxa de abandono precoce de educação e formação",
+      "fonte": "INE — Inquérito ao Emprego",
+      "periodicidade": "Anual",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "diplomados-superior",
+      "area": "meduc",
+      "nome": "População dos 30–34 anos com ensino superior",
+      "fonte": "INE",
+      "periodicidade": "Anual",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "esperanca-vida",
+      "area": "msaude",
+      "nome": "Esperança de vida à nascença",
+      "fonte": "INE — Tábuas de Mortalidade",
+      "periodicidade": "Anual",
+      "unidade": "Anos",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "medicos-hab",
+      "area": "msaude",
+      "nome": "Médicos por 1 000 habitantes",
+      "fonte": "INE / Ordem dos Médicos",
+      "periodicidade": "Anual",
+      "unidade": "‰",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "precos-habitacao",
+      "area": "minfra",
+      "nome": "Índice de preços da habitação — variação homóloga",
+      "fonte": "INE — IPHab",
+      "periodicidade": "Trimestral",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "licencas-construcao",
+      "area": "minfra",
+      "nome": "Edifícios licenciados em construções novas para habitação",
+      "fonte": "INE — Estatísticas da Construção",
+      "periodicidade": "Mensal",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "risco-pobreza",
+      "area": "mtsss",
+      "nome": "Taxa de risco de pobreza",
+      "fonte": "INE — ICOR",
+      "periodicidade": "Anual",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "residuos-urbanos",
+      "area": "mamb",
+      "nome": "Resíduos urbanos recolhidos por habitante",
+      "fonte": "INE — Estatísticas do Ambiente",
+      "periodicidade": "Anual",
+      "unidade": "kg/hab",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "energia-renovavel",
+      "area": "mamb",
+      "nome": "Eletricidade a partir de fontes renováveis",
+      "fonte": "INE / DGEG",
+      "periodicidade": "Anual",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "producao-agricola",
+      "area": "magri",
+      "nome": "Índice de produção agrícola",
+      "fonte": "INE — Estatísticas Agrícolas",
+      "periodicidade": "Anual",
+      "unidade": "Índice",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "pesca-descargas",
+      "area": "magri",
+      "nome": "Descargas de pescado — volume",
+      "fonte": "INE / Docapesca",
+      "periodicidade": "Mensal",
+      "unidade": "t",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "imigracao-titulos",
+      "area": "mai",
+      "nome": "População estrangeira com estatuto legal de residente",
+      "fonte": "INE / AIMA",
+      "periodicidade": "Anual",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "sinistralidade",
+      "area": "mai",
+      "nome": "Acidentes de viação com vítimas",
+      "fonte": "INE / ANSR",
+      "periodicidade": "Anual",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "despesa-cultura",
+      "area": "mcult",
+      "nome": "Despesa das câmaras municipais em atividades culturais",
+      "fonte": "INE — Estatísticas da Cultura",
+      "periodicidade": "Anual",
+      "unidade": "EUR",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "espetaculos",
+      "area": "mcult",
+      "nome": "Espectadores de espetáculos ao vivo",
+      "fonte": "INE / IGAC",
+      "periodicidade": "Anual",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "emprego-ap",
+      "area": "madjre",
+      "nome": "Emprego no setor das Administrações Públicas",
+      "fonte": "DGAEP / INE",
+      "periodicidade": "Trimestral",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "comercio-internacional-servicos",
+      "area": "mnegest",
+      "nome": "Exportações de serviços — valor",
+      "fonte": "INE / Banco de Portugal",
+      "periodicidade": "Mensal",
+      "unidade": "EUR",
+      "varcd": null,
+      "verificado": false
+    }
+  ]
+};
+
+/* Paleta e ícones por área (SVG traço, herda a cor) */
+const CORES_AREA = ['#275673','#266B73','#1F735B','#3E7CA6','#6B5B95','#8A6D3B','#455A64','#7B4B94',
+                    '#B23A48','#2E6E4E','#A65D21','#1F6F8B','#5C7457','#3A6351','#7D5A50','#4A5899'];
+const ICONES = {
+  mnegest:'M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2c3 3.5 3 16.5 0 20M12 2c-3 3.5-3 16.5 0 20',
+  mfin:'M12 3v18M7 7c0-2 2.2-3 5-3s5 1 5 3-2 3-5 3-5 1-5 3 2.2 3 5 3 5-1 5-3',
+  mpres:'M3 21h18M5 21V10M19 21V10M3 10h18L12 3 3 10zM9 21v-6h6v6',
+  madjre:'M12 8a4 4 0 100 8 4 4 0 000-8zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1',
+  mparl:'M4 5h16v11H9l-5 4V5z',
+  mecon:'M3 21h18M6 17l4-5 3 3 5-7M15 8h3v3',
+  mdn:'M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3z',
+  mai:'M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3zM9 12l2 2 4-4',
+  mj:'M12 3v18M8 21h8M5 7h14M7 7l-3 6a3.5 3.5 0 007 0L8 7M17 7l-3 6a3.5 3.5 0 007 0l-3-6',
+  meduc:'M12 4L2 9l10 5 10-5-10-5zM6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5',
+  msaude:'M12 21C7 16.5 3 13 3 8.7A4.7 4.7 0 0112 6a4.7 4.7 0 019 2.7c0 4.3-4 7.8-9 12.3zM8 11h2.5l1-2 2 4 1-2H17',
+  minfra:'M3 21V9l9-6 9 6v12M9 21v-8h6v8M3 21h18',
+  mtsss:'M8 8a3 3 0 100-6 3 3 0 000 6zM16 9a3 3 0 100-6 3 3 0 000 6zM2 21v-2a5 5 0 015-5h2a5 5 0 015 5v2M14 14h2a5 5 0 015 5v2',
+  mamb:'M6 20c8 0 13-5 13-14-9 0-14 5-14 13M6 20c0-4 2-8 6-11',
+  magri:'M12 21V8M12 8c0-3 2-5 5-5 0 3-2 5-5 5zM12 12c0-3-2-5-5-5 0 3 2 5 5 5zM12 16c0-3 2-5 5-5 0 3-2 5-5 5z',
+  mcult:'M4 4c2 1.5 6 1.5 8 0 2 1.5 6 1.5 8 0v9a8 4 0 01-16 0V4zM8 10v3M12 11v3M16 10v3'
+};
+function svgIcone(area, tam){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"${tam?` style="width:${tam}px;height:${tam}px"`:''}><path d="${ICONES[area]||ICONES.mpres}"/></svg>`;
+}
+
+const INE = {
+  dados: (varcd, dims) => { const p = new URLSearchParams({op:'2', varcd, lang:'PT'});
+    if (dims) Object.entries(dims).forEach(([k,v])=>p.set(k,v));
+    return `https://www.ine.pt/ine/json_indicador/pindica.jsp?${p}`; },
+  meta: v => `https://www.ine.pt/ine/json_indicador/pindicaMeta.jsp?varcd=${v}&lang=PT`,
+  ficha: v => `https://www.ine.pt/xurl/indx/${v}/PT`,
+  fichaMeta: v => `https://www.ine.pt/xurl/metax/${v}/PT`,
+  bdd: 'https://www.ine.pt/xportal/xmain?xpid=INE&xpgid=ine_base_dados',
+  smi: 'https://smi.ine.pt/Indicador'
+};
+
+let CAT = null, indicadorAtivo = null, ultimoComposto = null, ultimoCruzamento = null;
+const graficos = {}, cacheSeries = {}, tiles = [];
+const estado = { texto:'', area:'', period:'', api:'' };
+
+/* ---------- utilitários ---------- */
+function corArea(id){ return CORES_AREA[CAT.areas.findIndex(a=>a.id===id) % CORES_AREA.length]; }
+function areaNome(id){ return (CAT.areas.find(a=>a.id===id)||{}).nome || id; }
+function porId(id){ return CAT.indicadores.find(i=>i.id===id); }
+
+function serieDemo(id){
+  let h = 0; for (const c of id) h = (h*31 + c.charCodeAt(0)) % 997;
+  const rotulos = [], valores = []; let v = 40 + (h % 55);
+  for (let a = 2016; a <= 2025; a++){ rotulos.push(String(a));
+    v = Math.max(2, v + Math.sin((a+h)*1.7)*6 + ((h>>2)%5) - 2);
+    valores.push(Math.round(v*10)/10); }
+  return { rotulos, valores, real:false };
+}
+function serieAtiva(id){ return cacheSeries[id] || (cacheSeries[id] = serieDemo(id)); }
+
+function novoGrafico(chave, canvas, config){
+  if (graficos[chave]) graficos[chave].destroy();
+  graficos[chave] = new Chart(canvas, config);
+  return graficos[chave];
+}
+const FONTE = {font:{family:'Lexend',size:11}};
+function opcoesBase(legenda){ return {responsive:true,
+  plugins:{legend:{display:!!legenda,labels:FONTE}},
+  scales:{x:{ticks:FONTE},y:{ticks:FONTE}}}; }
+
+function sparkline(id, cor){
+  const s = serieAtiva(id), min = Math.min(...s.valores), max = Math.max(...s.valores)||1;
+  const pts = s.valores.map((v,ix)=>`${(ix/(s.valores.length-1))*100},${36-((v-min)/(max-min||1))*30}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 100 40" preserveAspectRatio="none">
+    <polygon class="area-fill" points="0,40 ${pts} 100,40" fill="${cor}"/>
+    <polyline points="${pts}" stroke="${cor}"/></svg>`;
+}
+
+/* ---------- Explorar ---------- */
+function aplicarFiltros(){
+  const t = estado.texto.toLowerCase();
+  return CAT.indicadores.filter(i =>
+    (!estado.area || i.area===estado.area) &&
+    (!estado.period || i.periodicidade===estado.period) &&
+    (!estado.api || (estado.api==='sim' ? !!i.varcd : !i.varcd)) &&
+    (!t || [i.nome,i.fonte,i.unidade,areaNome(i.area)].join(' ').toLowerCase().includes(t)));
+}
+
+function render(){
+  const res = aplicarFiltros();
+  const ga = document.getElementById('grelha-areas'); ga.innerHTML='';
+  CAT.areas.forEach(a=>{
+    const n = CAT.indicadores.filter(i=>i.area===a.id).length;
+    const cor = corArea(a.id);
+    const el = document.createElement('div');
+    el.className = 'area-cartao' + (estado.area===a.id?' ativa':'');
+    el.innerHTML = `<div class="area-icone" style="background:${cor}">${svgIcone(a.id)}</div>
+      <div><div class="nome">${a.nome}</div><div class="conta">${n} indicador${n===1?'':'es'}</div></div>
+      <div class="marca-agua" style="color:${cor}">${svgIcone(a.id,84)}</div>`;
+    el.onclick = ()=>{ estado.area = estado.area===a.id?'':a.id; document.getElementById('filtro-area').value=estado.area; render(); };
+    ga.appendChild(el);
+  });
+
+  const gi = document.getElementById('grelha-indicadores'); gi.innerHTML='';
+  res.forEach(i=>{
+    const cor = corArea(i.area);
+    const el = document.createElement('div'); el.className='cartao-ind';
+    el.innerHTML = `
+      <div class="cartao-topo" style="background:${cor}">${svgIcone(i.area)}<span class="area-nome">${areaNome(i.area)}</span></div>
+      <div class="cartao-corpo">
+        <h3>${i.nome}</h3>
+        ${sparkline(i.id, cor)}
+        <div class="meta"><span>${i.fonte}</span><span>${i.periodicidade}</span><span>${i.unidade}</span></div>
+        <span class="badge-api ${i.varcd?'ok':'pendente'}">${i.varcd?'API INE · código '+i.varcd:'código INE por configurar'}</span>
+        <div class="acoes">
+          <button class="botao primario" data-ac="detalhe">Ver detalhe</button>
+          <button class="botao dourado" data-ac="tile">+ Painel</button>
+          <a class="botao" target="_blank" rel="noopener" href="${i.varcd?INE.ficha(i.varcd):INE.bdd}">INE</a>
+        </div>
+      </div>`;
+    el.querySelector('[data-ac=detalhe]').onclick = ()=>abrirPainel(i);
+    el.querySelector('[data-ac=tile]').onclick = ()=>adicionarTile({tipo:'indicador', id:i.id});
+    gi.appendChild(el);
+  });
+  document.getElementById('sem-resultados').style.display = res.length?'none':'block';
+  document.getElementById('conta-resultados').textContent = `— ${res.length} resultado${res.length===1?'':'s'}`;
+}
+
+/* ---------- Painel de detalhe ---------- */
+function abrirPainel(i){
+  indicadorAtivo = i;
+  document.getElementById('painel-titulo').textContent = i.nome;
+  document.getElementById('painel-sub').textContent = `${areaNome(i.area)} · ${i.fonte} · ${i.periodicidade} · ${i.unidade}`;
+  const s = serieAtiva(i.id);
+  desenharDetalhe(s.rotulos, [{label:i.unidade||'Valor', data:s.valores}], !s.real);
+  preencherTabela(s.rotulos, s.valores);
+  const est = document.getElementById('estado-api');
+  est.className='estado-api info';
+  est.textContent = i.varcd
+    ? (s.real ? 'Série real do INE em memória nesta sessão.'
+              : 'A visualização mostra dados fictícios. Use «Carregar dados reais via API» (código '+i.varcd+').')
+    : 'Sem código INE (varcd) configurado — visualização ilustrativa. O script gerar_catalogo.py propõe códigos a partir do catálogo oficial (ver README).';
+  document.getElementById('ligacoes').innerHTML = i.varcd ? `
+    <a target="_blank" rel="noopener" href="${INE.ficha(i.varcd)}">Ficha do indicador na Base de Dados (xurl/indx/${i.varcd})</a>
+    <a target="_blank" rel="noopener" href="${INE.dados(i.varcd, i.dims_exemplo)}">Dados (JSON): pindica.jsp · op=2</a>
+    <a target="_blank" rel="noopener" href="${INE.meta(i.varcd)}">Metainformação (JSON): pindicaMeta.jsp</a>`
+    : `<a target="_blank" rel="noopener" href="${INE.bdd}">Base de Dados de Difusão do INE (localizar o indicador e o código)</a>
+       <a target="_blank" rel="noopener" href="${INE.smi}">Sistema de Metainformação do INE</a>`;
+  document.getElementById('btn-live').disabled = !i.varcd;
+  document.getElementById('veu').classList.add('aberto');
+  document.getElementById('painel').classList.add('aberto');
+}
+function fecharPaineis(){ ['painel','drill'].forEach(id=>document.getElementById(id).classList.remove('aberto'));
+  document.getElementById('veu').classList.remove('aberto'); }
+
+function desenharDetalhe(rotulos, series, ehDemo){
+  document.getElementById('marca-demo').style.display = ehDemo?'inline':'none';
+  const cores = ['#266B73','#275673','#1F735B','#F2B705','#D02117','#7A8B99'];
+  novoGrafico('detalhe', document.getElementById('grafico'), {type:'line',
+    data:{labels:rotulos, datasets:series.map((s,ix)=>({label:s.label,data:s.data,
+      borderColor:cores[ix%cores.length],backgroundColor:cores[ix%cores.length]+'22',
+      borderWidth:2,tension:.3,pointRadius:3,fill:series.length===1}))},
+    options:opcoesBase(series.length>1)});
+}
+function preencherTabela(rotulos, valores){
+  document.getElementById('tabela-corpo').innerHTML =
+    rotulos.map((r,ix)=>`<tr><td>${r}</td><td>${valores[ix] ?? '—'}</td></tr>`).join('');
+}
+
+/* ---------- Dados reais: recolha do repositório -> API direta ---------- */
+async function carregarReais(){
+  const i = indicadorAtivo; if (!i || !i.varcd) return;
+  const est = document.getElementById('estado-api');
+  est.className='estado-api info'; est.textContent='A obter dados do INE…';
+  try {
+    const r = await fetch(`data/dados_${i.varcd}.json`, {cache:'no-store'});
+    if (r.ok){ const j = await r.json();
+      aplicarResposta(j.resposta || j, i);
+      est.className='estado-api ok';
+      est.textContent = `Dados reais do INE (recolha do repositório em ${j._recolha || 'data desconhecida'}).`;
+      return; }
+  } catch(_){}
+  try {
+    const r = await fetch(INE.dados(i.varcd, i.dims_exemplo));
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    aplicarResposta(await r.json(), i);
+    est.className='estado-api ok';
+    est.textContent='Dados reais obtidos diretamente da API do INE.';
+  } catch(erro){
+    est.className='estado-api erro';
+    est.textContent='Não foi possível obter os dados diretamente do browser (provável restrição CORS ou pré-visualização local). Em produção, a recolha do GitHub Actions grava data/dados_'+i.varcd+'.json e o painel lê-o automaticamente. A hiperligação «Dados (JSON)» acima responde normalmente fora do browser.';
+  }
+}
+/* Estrutura documentada: [{IndicadorCod, IndicadorDsg, Dados:{período:[{geodsg, valor}]}}] */
+function aplicarResposta(resposta, i){
+  const raiz = Array.isArray(resposta)?resposta[0]:resposta;
+  const dados = raiz && raiz.Dados; if (!dados) throw new Error('estrutura inesperada');
+  const periodos = Object.keys(dados).sort(); const porGeo = {};
+  periodos.forEach(p=>(dados[p]||[]).forEach(l=>{
+    const g = l.geodsg || l.geocod || 'Total';
+    (porGeo[g]=porGeo[g]||{})[p] = parseFloat(String(l.valor).replace(',','.'));
+  }));
+  const geos = Object.keys(porGeo).slice(0,6);
+  desenharDetalhe(periodos, geos.map(g=>({label:g, data:periodos.map(p=>porGeo[g][p] ?? null)})), false);
+  const g0 = geos[0];
+  const valores0 = periodos.map(p=>porGeo[g0]?porGeo[g0][p]:null);
+  preencherTabela(periodos, valores0);
+  cacheSeries[i.id] = {rotulos:periodos, valores:valores0, real:true};
+  if (raiz.IndicadorDsg) document.getElementById('painel-titulo').textContent = raiz.IndicadorDsg;
+}
+
+/* ---------- KPI clicáveis (drill-down) ---------- */
+function abrirDrill(tipo){
+  const t = document.getElementById('drill-titulo'), s = document.getElementById('drill-sub'),
+        c = document.getElementById('drill-corpo');
+  const linhaInd = i => `<tr><td>${i.nome}</td><td>${areaNome(i.area)}</td>
+    <td>${i.varcd ? '<span class="badge-api ok">'+i.varcd+'</span>' : '<span class="badge-api pendente">por configurar</span>'}</td></tr>`;
+  if (tipo==='indicadores'){
+    t.textContent='Indicadores no catálogo'; s.textContent=CAT.indicadores.length+' entradas';
+    c.innerHTML = `<table class="dados"><thead><tr><th>Indicador</th><th>Área</th><th>API</th></tr></thead>
+      <tbody>${CAT.indicadores.map(linhaInd).join('')}</tbody></table>`;
+  } else if (tipo==='areas'){
+    t.textContent='Cobertura por área governativa'; s.textContent='XXV Governo Constitucional';
+    c.innerHTML = `<table class="dados"><thead><tr><th>Área</th><th>Indicadores</th><th>Com API</th></tr></thead><tbody>` +
+      CAT.areas.map(a=>{ const l=CAT.indicadores.filter(i=>i.area===a.id);
+        return `<tr><td>${a.nome}</td><td>${l.length}</td><td>${l.filter(i=>i.varcd).length}</td></tr>`; }).join('') +
+      `</tbody></table>`;
+  } else if (tipo==='api'){
+    const l = CAT.indicadores.filter(i=>i.varcd);
+    t.textContent='Indicadores com API configurada'; s.textContent=l.length+' com código INE verificado';
+    c.innerHTML = `<table class="dados"><thead><tr><th>Indicador</th><th>Área</th><th>Código</th></tr></thead>
+      <tbody>${l.map(linhaInd).join('')}</tbody></table>
+      <div class="metodo" style="margin-top:14px">Para alargar a cobertura: correr <code>scripts/gerar_catalogo.py</code> (descarrega o catálogo oficial de ~260 «Principais Indicadores» do INE e propõe códigos por área) e validar as propostas antes de as copiar para <code>data/catalogo.json</code>.</div>`;
+  } else {
+    t.textContent='Estado da recolha'; s.textContent='GitHub Actions · atualizar-dados.yml';
+    c.innerHTML = `<div id="drill-recolha">A consultar data/recolha.json…</div>`;
+    fetch('data/recolha.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+      document.getElementById('drill-recolha').innerHTML = j
+        ? `<table class="dados"><tbody>
+            <tr><td>Última execução</td><td>${j.recolha}</td></tr>
+            <tr><td>Com sucesso</td><td>${(j.sucesso||[]).join(', ')||'—'}</td></tr>
+            <tr><td>Com falha</td><td>${(j.falha||[]).map(f=>f.varcd).join(', ')||'—'}</td></tr>
+          </tbody></table>`
+        : `<div class="metodo">Ainda não existe registo de recolha. Após a publicação no GitHub, o workflow corre às segundas-feiras (06h30 UTC) ou manualmente no separador Actions, e grava data/recolha.json com o resultado.</div>`;
+    }).catch(()=>{});
+  }
+  document.getElementById('veu').classList.add('aberto');
+  document.getElementById('drill').classList.add('aberto');
+}
+
+/* ---------- Indicadores compostos ---------- */
+function renderCompostos(){
+  const sel = document.getElementById('comp-area');
+  if (!sel.options.length){
+    CAT.areas.forEach(a=>sel.add(new Option(a.nome, a.id)));
+    sel.onchange = renderCompostos;
+  }
+  const area = sel.value || CAT.areas[0].id; sel.value = area;
+  const lista = document.getElementById('comp-lista');
+  lista.innerHTML = CAT.indicadores.filter(i=>i.area===area).map(i=>`
+    <div class="linha-comp">
+      <label><input type="checkbox" data-id="${i.id}"> ${i.nome} <span style="color:var(--texto2)">(${i.unidade})</span></label>
+      <span style="font-size:11.5px;color:var(--texto2)">peso</span>
+      <input type="number" data-peso="${i.id}" value="1" min="0" step="0.5">
+      <select data-pol="${i.id}">
+        <option value="1">maior é favorável</option>
+        <option value="-1">maior é desfavorável</option>
+      </select>
+    </div>`).join('') || '<div class="ajuda">Sem indicadores nesta área.</div>';
+}
+
+function calcularComposto(){
+  const area = document.getElementById('comp-area').value;
+  const marcados = [...document.querySelectorAll('#comp-lista input[type=checkbox]:checked')].map(e=>e.dataset.id);
+  if (marcados.length < 2){ alert('Selecione pelo menos dois indicadores.'); return; }
+  const componentes = marcados.map(id=>({ id,
+    peso: parseFloat(document.querySelector(`[data-peso="${id}"]`).value)||1,
+    pol: parseInt(document.querySelector(`[data-pol="${id}"]`).value) }));
+  const series = componentes.map(c=>({...c, s:serieAtiva(c.id)}));
+  let comuns = series[0].s.rotulos;
+  series.slice(1).forEach(x=>{ comuns = comuns.filter(r=>x.s.rotulos.includes(r)); });
+  if (comuns.length < 3){ alert('Períodos comuns insuficientes entre as séries selecionadas.'); return; }
+  const somaPesos = componentes.reduce((a,c)=>a+c.peso,0)||1;
+  const indice = comuns.map(p=>{
+    let acc = 0;
+    series.forEach(x=>{
+      const vals = comuns.map(pp=>x.s.valores[x.s.rotulos.indexOf(pp)]);
+      const min = Math.min(...vals), max = Math.max(...vals);
+      let n = max===min ? 50 : ((x.s.valores[x.s.rotulos.indexOf(p)]-min)/(max-min))*100;
+      if (x.pol===-1) n = 100-n;
+      acc += n * (x.peso/somaPesos);
+    });
+    return Math.round(acc*10)/10;
+  });
+  const nome = document.getElementById('comp-nome').value.trim() || 'Índice composto (sem nome)';
+  const ehDemo = series.some(x=>!x.s.real);
+  ultimoComposto = { tipo:'composto', nome, area, componentes, rotulos:comuns, valores:indice, demo:ehDemo };
+  document.getElementById('comp-caixa').style.display='block';
+  document.getElementById('comp-demo').style.display = ehDemo?'inline':'none';
+  novoGrafico('composto', document.getElementById('comp-grafico'), {type:'line',
+    data:{labels:comuns, datasets:[{label:nome+' (0–100)', data:indice,
+      borderColor:'#1F735B', backgroundColor:'#1F735B22', borderWidth:2.5, tension:.3, fill:true}]},
+    options:opcoesBase(true)});
+  const met = document.getElementById('comp-metodo'); met.style.display='block';
+  met.innerHTML = `<strong>Método:</strong> normalização mín.–máx. (0–100) por série nos ${comuns.length} períodos comuns, com inversão nas séries de polaridade desfavorável, seguida de média ponderada (pesos: ${componentes.map(c=>porId(c.id).nome.split(' ').slice(0,3).join(' ')+' = '+c.peso).join('; ')}). ${ehDemo?'Inclui séries de demonstração — sem valor oficial.':'Calculado sobre séries reais do INE em memória.'}`;
+  document.getElementById('comp-painel').disabled = false;
+  document.getElementById('comp-exportar').disabled = false;
+}
+
+/* ---------- Cruzamentos ---------- */
+function preencherSeletoresCruz(){
+  const a = document.getElementById('cruz-a'), b = document.getElementById('cruz-b');
+  if (a.options.length) return;
+  CAT.indicadores.forEach(i=>{ const o = ()=>new Option(`${areaNome(i.area)} — ${i.nome}`, i.id);
+    a.add(o()); b.add(o()); });
+  b.selectedIndex = Math.min(1, b.options.length-1);
+}
+function pearson(x, y){
+  const n = x.length, mx = x.reduce((a,v)=>a+v,0)/n, my = y.reduce((a,v)=>a+v,0)/n;
+  let num=0, dx=0, dy=0;
+  for (let k=0;k<n;k++){ num += (x[k]-mx)*(y[k]-my); dx += (x[k]-mx)**2; dy += (y[k]-my)**2; }
+  return dx&&dy ? num/Math.sqrt(dx*dy) : 0;
+}
+function calcularCruzamento(){
+  const ia = porId(document.getElementById('cruz-a').value),
+        ib = porId(document.getElementById('cruz-b').value);
+  if (!ia || !ib || ia.id===ib.id){ alert('Escolha dois indicadores diferentes.'); return; }
+  const sa = serieAtiva(ia.id), sb = serieAtiva(ib.id);
+  const comuns = sa.rotulos.filter(r=>sb.rotulos.includes(r));
+  if (comuns.length < 3){ alert('Períodos comuns insuficientes.'); return; }
+  const va = comuns.map(p=>sa.valores[sa.rotulos.indexOf(p)]),
+        vb = comuns.map(p=>sb.valores[sb.rotulos.indexOf(p)]);
+  const r = Math.round(pearson(va,vb)*100)/100;
+  ultimoCruzamento = { tipo:'cruzamento', a:ia.id, b:ib.id, rotulos:comuns, va, vb, r,
+    demo: !sa.real || !sb.real };
+  document.getElementById('cruz-caixa1').style.display='block';
+  document.getElementById('cruz-caixa2').style.display='block';
+  novoGrafico('cruzlin', document.getElementById('cruz-linhas'), {type:'line',
+    data:{labels:comuns, datasets:[
+      {label:ia.nome, data:va, borderColor:'#266B73', borderWidth:2, tension:.3, yAxisID:'y'},
+      {label:ib.nome, data:vb, borderColor:'#D02117', borderWidth:2, tension:.3, yAxisID:'y1'}]},
+    options:{responsive:true, plugins:{legend:{display:true,labels:FONTE}},
+      scales:{x:{ticks:FONTE}, y:{position:'left',ticks:FONTE}, y1:{position:'right',grid:{drawOnChartArea:false},ticks:FONTE}}}});
+  novoGrafico('cruzdisp', document.getElementById('cruz-dispersao'), {type:'scatter',
+    data:{datasets:[{label:`${ia.unidade||'A'} × ${ib.unidade||'B'}`,
+      data:comuns.map((p,ix)=>({x:va[ix], y:vb[ix]})), backgroundColor:'#27567388', borderColor:'#275673'}]},
+    options:{responsive:true, plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>`${comuns[ctx.dataIndex]}: (${ctx.parsed.x}; ${ctx.parsed.y})`}}},
+      scales:{x:{title:{display:true,text:ia.nome,...FONTE},ticks:FONTE},
+              y:{title:{display:true,text:ib.nome,...FONTE},ticks:FONTE}}}});
+  const met = document.getElementById('cruz-metodo'); met.style.display='block';
+  met.innerHTML = `<strong>Correlação de Pearson: r = ${r}</strong> em ${comuns.length} períodos comuns. Sinalização exploratória — não implica causalidade${ultimoCruzamento.demo?'; inclui séries de demonstração, sem valor oficial':''}.`;
+  document.getElementById('cruz-painel').disabled = false;
+}
+
+/* ---------- O meu painel ---------- */
+function adicionarTile(cfg){
+  tiles.push(JSON.parse(JSON.stringify(cfg)));
+  renderTiles();
+  mudarPagina('painel-meu');
+}
+function renderTiles(){
+  document.getElementById('conta-tiles').textContent = tiles.length?`(${tiles.length})`:'';
+  const cont = document.getElementById('tiles'); cont.innerHTML='';
+  document.getElementById('tiles-vazio').style.display = tiles.length?'none':'block';
+  tiles.forEach((tl,ix)=>{
+    const el = document.createElement('div'); el.className='tile';
+    const canvasId = 'tile-c-'+ix;
+    let titulo='', demo=true;
+    if (tl.tipo==='indicador'){ const i = porId(tl.id); titulo = `${areaNome(i.area)} — ${i.nome}`; demo = !serieAtiva(i.id).real; }
+    if (tl.tipo==='composto'){ titulo = `Índice: ${tl.nome} (${areaNome(tl.area)})`; demo = tl.demo; }
+    if (tl.tipo==='cruzamento'){ titulo = `Cruzamento: ${porId(tl.a).nome} × ${porId(tl.b).nome} (r=${tl.r})`; demo = tl.demo; }
+    el.innerHTML = `<h4>${titulo}</h4><button class="remover" title="Remover">✕</button>
+      <div class="grafico-caixa" style="margin-top:4px;padding:8px">${demo?'<span class="marca-demo">DEMONSTRAÇÃO</span>':''}
+      <canvas id="${canvasId}" height="150"></canvas></div>`;
+    el.querySelector('.remover').onclick = ()=>{ tiles.splice(ix,1); renderTiles(); };
+    cont.appendChild(el);
+    const ctx = document.getElementById(canvasId);
+    if (tl.tipo==='indicador'){ const i = porId(tl.id), s = serieAtiva(i.id);
+      novoGrafico(canvasId, ctx, {type:'line', data:{labels:s.rotulos,
+        datasets:[{data:s.valores, borderColor:corArea(i.area), backgroundColor:corArea(i.area)+'22',
+          borderWidth:2, tension:.3, fill:true, pointRadius:2}]},
+        options:{...opcoesBase(false), plugins:{legend:{display:false}}}});
+    } else if (tl.tipo==='composto'){
+      novoGrafico(canvasId, ctx, {type:'line', data:{labels:tl.rotulos,
+        datasets:[{data:tl.valores, borderColor:'#1F735B', backgroundColor:'#1F735B22',
+          borderWidth:2, tension:.3, fill:true, pointRadius:2}]},
+        options:{...opcoesBase(false), plugins:{legend:{display:false}}}});
+    } else {
+      novoGrafico(canvasId, ctx, {type:'scatter', data:{datasets:[{
+        data:tl.rotulos.map((p,k)=>({x:tl.va[k], y:tl.vb[k]})), backgroundColor:'#27567388'}]},
+        options:{...opcoesBase(false), plugins:{legend:{display:false}}}});
+    }
+  });
+}
+function exportarPainel(){
+  descarregar('radar-ine_painel.json', { aviso:'Configuração de painel — Radar INE (as séries de demonstração não têm valor oficial)',
+    exportado:new Date().toISOString(), tiles });
+}
+function importarPainel(ev){
+  const f = ev.target.files[0]; if (!f) return;
+  const leitor = new FileReader();
+  leitor.onload = ()=>{ try{
+      const j = JSON.parse(leitor.result);
+      if (Array.isArray(j.tiles)){ tiles.length = 0; j.tiles.forEach(t=>tiles.push(t)); renderTiles(); }
+      else alert('Ficheiro sem a estrutura esperada (campo "tiles").');
+    } catch(_){ alert('Ficheiro JSON inválido.'); } };
+  leitor.readAsText(f); ev.target.value='';
+}
+function descarregar(nome, objeto){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(objeto,null,2)],{type:'application/json'}));
+  a.download = nome; a.click();
+}
+
+/* ---------- Navegação ---------- */
+function mudarPagina(pag){
+  document.querySelectorAll('.pagina').forEach(p=>p.classList.remove('ativa'));
+  document.getElementById('pag-'+pag).classList.add('ativa');
+  document.querySelectorAll('.separador').forEach(s=>s.classList.toggle('ativo', s.dataset.pag===pag));
+  if (pag==='compostos') renderCompostos();
+  if (pag==='cruzar') preencherSeletoresCruz();
+  if (pag==='painel-meu') renderTiles();
+}
+
+/* ---------- Arranque ---------- */
+async function iniciar(){
+  try { const r = await fetch('data/catalogo.json',{cache:'no-store'});
+    CAT = r.ok ? await r.json() : CATALOGO_EMBEBIDO;
+  } catch(_){ CAT = CATALOGO_EMBEBIDO; }
+
+  document.getElementById('kpi-total').textContent = CAT.indicadores.length;
+  document.getElementById('kpi-areas').textContent = CAT.areas.length;
+  document.getElementById('kpi-api').textContent = CAT.indicadores.filter(i=>i.varcd).length;
+  try { const r = await fetch('data/recolha.json',{cache:'no-store'});
+    document.getElementById('kpi-recolha').textContent = r.ok ? (await r.json()).recolha.slice(0,10) : 'por executar';
+  } catch(_){ document.getElementById('kpi-recolha').textContent = 'por executar'; }
+
+  const fa = document.getElementById('filtro-area');
+  CAT.areas.forEach(a=>fa.add(new Option(a.nome, a.id)));
+  const fp = document.getElementById('filtro-period');
+  [...new Set(CAT.indicadores.map(i=>i.periodicidade))].sort().forEach(p=>fp.add(new Option(p,p)));
+
+  document.getElementById('pesquisa').oninput = e=>{ estado.texto=e.target.value; render(); };
+  fa.onchange = e=>{ estado.area=e.target.value; render(); };
+  fp.onchange = e=>{ estado.period=e.target.value; render(); };
+  document.getElementById('filtro-api').onchange = e=>{ estado.api=e.target.value; render(); };
+  document.getElementById('limpar').onclick = ()=>{ Object.assign(estado,{texto:'',area:'',period:'',api:''});
+    document.getElementById('pesquisa').value=''; fa.value=''; fp.value='';
+    document.getElementById('filtro-api').value=''; render(); };
+
+  document.getElementById('veu').onclick = fecharPaineis;
+  document.getElementById('painel-fechar').onclick = fecharPaineis;
+  document.getElementById('drill-fechar').onclick = fecharPaineis;
+  document.getElementById('btn-live').onclick = carregarReais;
+  document.getElementById('btn-tile').onclick = ()=>{ if (indicadorAtivo){ fecharPaineis(); adicionarTile({tipo:'indicador', id:indicadorAtivo.id}); } };
+  document.getElementById('btn-json').onclick = ()=>{ const i=indicadorAtivo; if(!i) return;
+    const s = serieAtiva(i.id);
+    descarregar(`radar-ine_${i.id}.json`, { aviso: s.real?null:'SÉRIE DE DEMONSTRAÇÃO — não usar como dado oficial',
+      indicador:i, serie:s, api_ine: i.varcd?{dados:INE.dados(i.varcd,i.dims_exemplo), meta:INE.meta(i.varcd), ficha:INE.ficha(i.varcd)}:null }); };
+
+  document.querySelectorAll('.kpi').forEach(k=>k.onclick = ()=>abrirDrill(k.dataset.drill));
+  document.querySelectorAll('.separador').forEach(s=>s.onclick = ()=>mudarPagina(s.dataset.pag));
+  document.getElementById('comp-calcular').onclick = calcularComposto;
+  document.getElementById('comp-painel').onclick = ()=>{ if (ultimoComposto) adicionarTile(ultimoComposto); };
+  document.getElementById('comp-exportar').onclick = ()=>{ if (ultimoComposto)
+    descarregar('radar-ine_composto.json', {aviso:'Configuração de índice composto — validar metodologicamente antes de uso oficial', ...ultimoComposto}); };
+  document.getElementById('cruz-calcular').onclick = calcularCruzamento;
+  document.getElementById('cruz-painel').onclick = ()=>{ if (ultimoCruzamento) adicionarTile(ultimoCruzamento); };
+  document.getElementById('painel-exportar').onclick = exportarPainel;
+  document.getElementById('painel-importar').onchange = importarPainel;
+
+  render();
+}
+iniciar();
+</script>
+</body>
+</html>
