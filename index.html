@@ -778,7 +778,9 @@ function desenharDetalhe(rotulos, series, ehDemo){
       borderWidth:2,tension:.3,pointRadius:3,fill:series.length===1}))},
     options:opcoesBase(series.length>1)});
 }
-function preencherTabela(rotulos, valores){
+function preencherTabela(rotulos, valores, geo){
+  const th = document.querySelector('#tabela-corpo') && document.querySelector('#tabela-corpo').closest('table').querySelector('thead th:last-child');
+  if (th) th.textContent = geo ? `Valor · ${geo}` : 'Valor';
   document.getElementById('tabela-corpo').innerHTML =
     rotulos.map((r,ix)=>`<tr><td>${r}</td><td>${valores[ix] ?? '—'}</td></tr>`).join('');
 }
@@ -791,7 +793,7 @@ async function carregarReais(){
   try {
     const r = await fetch(`data/dados_${i.varcd}.json`, {cache:'no-store'});
     if (r.ok){ const j = await r.json();
-      aplicarResposta(j.resposta || j, i);
+      aplicarResposta(j.resposta || j, i, j);
       est.className='estado-api ok';
       est.textContent = `Dados reais do INE (recolha do repositório em ${j._recolha || 'data desconhecida'}).`;
       return; }
@@ -807,21 +809,45 @@ async function carregarReais(){
     est.textContent='Não foi possível obter os dados diretamente do browser (provável restrição CORS ou pré-visualização local). Em produção, a recolha do GitHub Actions grava data/dados_'+i.varcd+'.json e o painel lê-o automaticamente. A hiperligação «Dados (JSON)» acima responde normalmente fora do browser.';
   }
 }
-/* Estrutura documentada: [{IndicadorCod, IndicadorDsg, Dados:{período:[{geodsg, valor}]}}] */
-function aplicarResposta(resposta, i){
+/* Estrutura documentada: [{IndicadorCod, IndicadorDsg, Dados:{período:[{geocod, geodsg, dim_3, dim_3_t, valor}]}}]
+   O ficheiro do repositório acrescenta _ordem_periodos (cronológica) e _totais ({dim_3:'T', ...}). */
+const ROTULOS_TOTAL = new Set(['total','hm','t','todos','todas','ambos os sexos']);
+const NUTS2 = ['11','15','19','1A','1B','1C','1D','2','3','16','17','18'];  // NUTS II (2024 e anteriores)
+function ehTotal(l, totais){
+  return Object.keys(l).filter(k=>/^dim_\d+$/.test(k)).every(k=>{
+    const cod = String(l[k]), rot = String(l[k+'_t']||'').toLowerCase();
+    return (totais && totais[k] !== undefined) ? cod === String(totais[k]) : (cod.toUpperCase()==='T' || ROTULOS_TOTAL.has(rot));
+  });
+}
+function aplicarResposta(resposta, i, ficheiro){
   const raiz = Array.isArray(resposta)?resposta[0]:resposta;
   const dados = raiz && raiz.Dados; if (!dados) throw new Error('estrutura inesperada');
-  const periodos = Object.keys(dados).sort(); const porGeo = {};
-  periodos.forEach(p=>(dados[p]||[]).forEach(l=>{
-    const g = l.geodsg || l.geocod || 'Total';
-    (porGeo[g]=porGeo[g]||{})[p] = parseFloat(String(l.valor).replace(',','.'));
-  }));
-  const geos = Object.keys(porGeo).slice(0,6);
-  desenharDetalhe(periodos, geos.map(g=>({label:g, data:periodos.map(p=>porGeo[g][p] ?? null)})), false);
+  const periodos = (ficheiro && ficheiro._ordem_periodos && ficheiro._ordem_periodos.length) ? ficheiro._ordem_periodos : Object.keys(dados);
+  const totais = ficheiro && ficheiro._totais;
+  // 1) só linhas de total nas dimensões além da geografia (se existirem)
+  const linhas = [];
+  periodos.forEach(p=>(dados[p]||[]).forEach(l=>linhas.push({p, l})));
+  const haTotais = linhas.some(x=>ehTotal(x.l, totais));
+  const uteis = haTotais ? linhas.filter(x=>ehTotal(x.l, totais)) : linhas;
+  // 2) série por geografia (um código por nome, o mais curto = nível mais agregado)
+  const porGeo = {}, codGeo = {};
+  uteis.forEach(({p,l})=>{
+    const g = l.geodsg || l.geocod || 'Total', c = String(l.geocod||'');
+    if (codGeo[g] !== undefined && c.length > codGeo[g].length) return;
+    if (codGeo[g] !== undefined && c !== codGeo[g]) { porGeo[g] = {}; }
+    codGeo[g] = c;
+    const v = l.valor !== undefined && l.valor !== '' ? parseFloat(String(l.valor).replace(',','.')) : null;
+    (porGeo[g]=porGeo[g]||{})[p] = Number.isFinite(v) ? v : null;
+  });
+  // 3) ordem: Portugal, Continente, NUTS II; depois as restantes
+  const prioridade = g => { const c = codGeo[g]; if (c==='PT') return 0; if (c==='1') return 1; if (NUTS2.includes(c)) return 2; return 3; };
+  const geos = Object.keys(porGeo).sort((a,b)=>prioridade(a)-prioridade(b) || a.localeCompare(b,'pt')).slice(0,6);
+  const series = geos.map(g=>({label:g, data:periodos.map(p=>porGeo[g][p] ?? null)}));
+  desenharDetalhe(periodos, series, false);
   const g0 = geos[0];
   const valores0 = periodos.map(p=>porGeo[g0]?porGeo[g0][p]:null);
-  preencherTabela(periodos, valores0);
-  cacheSeries[i.id] = {rotulos:periodos, valores:valores0, real:true};
+  preencherTabela(periodos, valores0, g0);
+  cacheSeries[i.id] = {rotulos:periodos, valores:valores0, real:true, geo:g0};
   if (raiz.IndicadorDsg) document.getElementById('painel-titulo').textContent = raiz.IndicadorDsg;
 }
 
