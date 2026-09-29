@@ -6,12 +6,7 @@ Painel pesquisável que organiza indicadores e conjuntos de dados do Instituto N
 
 Secretaria-Geral do Governo · Direção de Serviços de Suporte à Decisão · Unidade de Pesquisa e Estatísticas.
 
-## Novidades da v0.3
-
-- Nova designação do produto: **Gov Monitor** (o protótipo chamou-se «Radar INE por Área Governativa» até setembro de 2026; a mudança abrange interface, README, scripts, robô de commits e ficheiros exportados).
-- Catálogo e nota interna atualizados (dois códigos verificados: 0008074 e 0004167).
-
-## Novidades da v0.2
+## Funcionalidades
 
 - Cartões de área com ícones e cartões de indicador com miniatura de tendência (*sparkline*).
 - KPI clicáveis com painel de detalhe (lista de indicadores, cobertura por área, estado da API e registo da recolha).
@@ -67,4 +62,4 @@ O `index.html` tem o espaço do logótipo preparado (`data:image/png;base64,SUBS
 
 ## Comparação com o Pordata (posicionamento)
 
-O Pordata organiza por temas estatísticos; este radar organiza pela estrutura orgânica do Governo, permitindo a cada gabinete ver de imediato «os seus» indicadores, com rasto direto à fonte primária (API do INE, metainformação e data de extração em cada ficheiro recolhido).
+O Pordata organiza por temas estatísticos; o Gov Monitor organiza pela estrutura orgânica do Governo, permitindo a cada gabinete ver de imediato «os seus» indicadores, com rasto direto à fonte primária (API do INE, metainformação e data de extração em cada ficheiro recolhido).
