@@ -1,0 +1,320 @@
+{
+  "versao": "1.0",
+  "atualizado": "2026-08-27",
+  "nota": "Catálogo de indicadores do Gov Monitor por Área Governativa. Campo 'varcd' = código do indicador na Base de Dados de Difusão do INE (obrigatório para recolha via API). Entradas com varcd null estão por configurar: obter o código em www.ine.pt > Base de Dados > Alterar condições de seleção > Códigos, e as dimensões em pindicaMeta.jsp. Só o indicador 0008074 tem código verificado (exemplo oficial da documentação da API do INE).",
+  "areas": [
+    {
+      "id": "mnegest",
+      "nome": "Estado e Negócios Estrangeiros"
+    },
+    {
+      "id": "mfin",
+      "nome": "Estado e Finanças"
+    },
+    {
+      "id": "mpres",
+      "nome": "Presidência"
+    },
+    {
+      "id": "madjre",
+      "nome": "Adjunto e Reforma do Estado"
+    },
+    {
+      "id": "mparl",
+      "nome": "Assuntos Parlamentares"
+    },
+    {
+      "id": "mecon",
+      "nome": "Economia e Coesão Territorial"
+    },
+    {
+      "id": "mdn",
+      "nome": "Defesa Nacional"
+    },
+    {
+      "id": "mai",
+      "nome": "Administração Interna"
+    },
+    {
+      "id": "mj",
+      "nome": "Justiça"
+    },
+    {
+      "id": "meduc",
+      "nome": "Educação, Ciência e Inovação"
+    },
+    {
+      "id": "msaude",
+      "nome": "Saúde"
+    },
+    {
+      "id": "minfra",
+      "nome": "Infraestruturas e Habitação"
+    },
+    {
+      "id": "mtsss",
+      "nome": "Trabalho, Solidariedade e Segurança Social"
+    },
+    {
+      "id": "mamb",
+      "nome": "Ambiente e Energia"
+    },
+    {
+      "id": "magri",
+      "nome": "Agricultura e Mar"
+    },
+    {
+      "id": "mcult",
+      "nome": "Cultura, Juventude e Desporto"
+    }
+  ],
+  "indicadores": [
+    {
+      "id": "criminalidade",
+      "area": "mj",
+      "nome": "Taxa de criminalidade (‰) por localização geográfica e categoria de crime",
+      "fonte": "DGPJ / INE",
+      "periodicidade": "Anual",
+      "unidade": "‰",
+      "varcd": "0008074",
+      "verificado": true,
+      "dims_exemplo": {
+        "Dim1": "S7A2015",
+        "Dim2": "200",
+        "Dim3": "3"
+      },
+      "nota_dims": "Dim1 = período (formato S7A{ano}); Dim2 = geografia (ex.: 11, 200 = R. A. Açores); Dim3 = categoria de crime (ex.: 3 = furto de veículo e em veículo motorizado). Fonte: documentação oficial da API BDD do INE."
+    },
+    {
+      "id": "tx-desemprego",
+      "area": "mtsss",
+      "nome": "Taxa de desemprego (Inquérito ao Emprego)",
+      "fonte": "INE — Inquérito ao Emprego",
+      "periodicidade": "Trimestral",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "ipc",
+      "area": "mfin",
+      "nome": "Índice de preços no consumidor — variação homóloga",
+      "fonte": "INE — IPC",
+      "periodicidade": "Mensal",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "pib-tvh",
+      "area": "mfin",
+      "nome": "PIB — taxa de variação homóloga (volume)",
+      "fonte": "INE — Contas Nacionais",
+      "periodicidade": "Trimestral",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "pop-residente",
+      "area": "mpres",
+      "nome": "População residente por local de residência, sexo e grupo etário",
+      "fonte": "INE — Estimativas anuais da população residente",
+      "periodicidade": "Anual",
+      "unidade": "N.º",
+      "varcd": "0004167",
+      "verificado": true,
+      "nota_dims": "Código verificado na documentação oficial do catálogo da API do INE (xml_indic.jsp). Sem dimensões obrigatórias: pindica.jsp?op=2&varcd=0004167&lang=PT devolve o período mais recente."
+    },
+    {
+      "id": "exportacoes",
+      "area": "mecon",
+      "nome": "Exportações de bens — valor",
+      "fonte": "INE — Comércio Internacional",
+      "periodicidade": "Mensal",
+      "unidade": "EUR",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "dormidas-turismo",
+      "area": "mecon",
+      "nome": "Dormidas em alojamentos turísticos",
+      "fonte": "INE — Estatísticas do Turismo",
+      "periodicidade": "Mensal",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "abandono-escolar",
+      "area": "meduc",
+      "nome": "Taxa de abandono precoce de educação e formação",
+      "fonte": "INE — Inquérito ao Emprego",
+      "periodicidade": "Anual",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "diplomados-superior",
+      "area": "meduc",
+      "nome": "População dos 30–34 anos com ensino superior",
+      "fonte": "INE",
+      "periodicidade": "Anual",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "esperanca-vida",
+      "area": "msaude",
+      "nome": "Esperança de vida à nascença",
+      "fonte": "INE — Tábuas de Mortalidade",
+      "periodicidade": "Anual",
+      "unidade": "Anos",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "medicos-hab",
+      "area": "msaude",
+      "nome": "Médicos por 1 000 habitantes",
+      "fonte": "INE / Ordem dos Médicos",
+      "periodicidade": "Anual",
+      "unidade": "‰",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "precos-habitacao",
+      "area": "minfra",
+      "nome": "Índice de preços da habitação — variação homóloga",
+      "fonte": "INE — IPHab",
+      "periodicidade": "Trimestral",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "licencas-construcao",
+      "area": "minfra",
+      "nome": "Edifícios licenciados em construções novas para habitação",
+      "fonte": "INE — Estatísticas da Construção",
+      "periodicidade": "Mensal",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "risco-pobreza",
+      "area": "mtsss",
+      "nome": "Taxa de risco de pobreza",
+      "fonte": "INE — ICOR",
+      "periodicidade": "Anual",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "residuos-urbanos",
+      "area": "mamb",
+      "nome": "Resíduos urbanos recolhidos por habitante",
+      "fonte": "INE — Estatísticas do Ambiente",
+      "periodicidade": "Anual",
+      "unidade": "kg/hab",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "energia-renovavel",
+      "area": "mamb",
+      "nome": "Eletricidade a partir de fontes renováveis",
+      "fonte": "INE / DGEG",
+      "periodicidade": "Anual",
+      "unidade": "%",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "producao-agricola",
+      "area": "magri",
+      "nome": "Índice de produção agrícola",
+      "fonte": "INE — Estatísticas Agrícolas",
+      "periodicidade": "Anual",
+      "unidade": "Índice",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "pesca-descargas",
+      "area": "magri",
+      "nome": "Descargas de pescado — volume",
+      "fonte": "INE / Docapesca",
+      "periodicidade": "Mensal",
+      "unidade": "t",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "imigracao-titulos",
+      "area": "mai",
+      "nome": "População estrangeira com estatuto legal de residente",
+      "fonte": "INE / AIMA",
+      "periodicidade": "Anual",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "sinistralidade",
+      "area": "mai",
+      "nome": "Acidentes de viação com vítimas",
+      "fonte": "INE / ANSR",
+      "periodicidade": "Anual",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "despesa-cultura",
+      "area": "mcult",
+      "nome": "Despesa das câmaras municipais em atividades culturais",
+      "fonte": "INE — Estatísticas da Cultura",
+      "periodicidade": "Anual",
+      "unidade": "EUR",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "espetaculos",
+      "area": "mcult",
+      "nome": "Espectadores de espetáculos ao vivo",
+      "fonte": "INE / IGAC",
+      "periodicidade": "Anual",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "emprego-ap",
+      "area": "madjre",
+      "nome": "Emprego no setor das Administrações Públicas",
+      "fonte": "DGAEP / INE",
+      "periodicidade": "Trimestral",
+      "unidade": "N.º",
+      "varcd": null,
+      "verificado": false
+    },
+    {
+      "id": "comercio-internacional-servicos",
+      "area": "mnegest",
+      "nome": "Exportações de serviços — valor",
+      "fonte": "INE / Banco de Portugal",
+      "periodicidade": "Mensal",
+      "unidade": "EUR",
+      "varcd": null,
+      "verificado": false
+    }
+  ]
+}

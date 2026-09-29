@@ -1,0 +1,34 @@
+{
+ "_recolha": "2026-09-29",
+ "varcd": "0008074",
+ "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0008074&lang=PT&Dim1=S7A2015&Dim2=200&Dim3=3",
+ "resposta": [
+  {
+   "IndicadorCod": "0008074",
+   "IndicadorDsg": "Taxa de criminalidade (‰) por Localização geográfica (NUTS - 2013) e Categoria de crime; Anual - Direcção-Geral da Política de Justiça",
+   "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0008074&lingua=PT",
+   "DataExtracao": "2026-09-29T23:48:00.424+01:00",
+   "DataUltimoAtualizacao": "2026-06-30",
+   "UltimoPref": "2022",
+   "Dados": {
+    "2015": [
+     {
+      "geocod": "200",
+      "geodsg": "Região Autónoma dos Açores",
+      "dim_3": "3",
+      "dim_3_t": "Furto de veículo e em veículo motorizado",
+      "ind_string": "1,9",
+      "valor": "1.9"
+     }
+    ]
+   },
+   "Sucesso": {
+    "Verdadeiro": [
+     {
+      "Msg": "OK"
+     }
+    ]
+   }
+  }
+ ]
+}
