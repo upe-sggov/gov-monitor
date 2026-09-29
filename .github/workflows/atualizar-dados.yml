@@ -8,9 +8,13 @@ on:
 permissions:
   contents: write
 
+env:
+  PYTHONUNBUFFERED: "1"     # mostra o progresso do script em tempo real no log
+
 jobs:
   recolha:
     runs-on: ubuntu-latest
+    timeout-minutes: 45     # nunca fica horas a correr se o INE não responder
     steps:
       - uses: actions/checkout@v4
 
@@ -22,6 +26,7 @@ jobs:
         run: python scripts/atualizar_dados.py
 
       - name: Registar alterações
+        if: always()          # grava o que tiver sido recolhido, mesmo que um indicador falhe
         run: |
           git config user.name "gov-monitor-bot"
           git config user.email "actions@users.noreply.github.com"
