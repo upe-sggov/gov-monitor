@@ -1,5 +1,5 @@
 """
-Gov Monitor — recolha semanal de dados da API do INE (v2).
+Gov Monitor — recolha semanal de dados da API do INE (v2.1).
 
 Executado pelo GitHub Actions (.github/workflows/atualizar-dados.yml).
 Para cada indicador com código INE (varcd) em data/catalogo.json:
@@ -19,6 +19,7 @@ Formato gravado:
 
 Só usa a biblioteca-padrão do Python.
 """
+import functools
 import json
 import re
 import sys
@@ -28,15 +29,18 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
+print = functools.partial(print, flush=True)  # mensagens imediatas no log do GitHub Actions
+
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA_DADOS = RAIZ / "data"
 CATALOGO = PASTA_DADOS / "catalogo.json"
 INDEX = RAIZ / "index.html"
 API = "https://www.ine.pt/ine/json_indicador/pindica.jsp"
 META = "https://www.ine.pt/ine/json_indicador/pindicaMeta.jsp"
-TENTATIVAS = 3
-PAUSA = 0.6  # segundos entre pedidos
-PERIODOS_POR_FREQ = {"anual": 12, "trimestral": 16, "mensal": 36, "decenal": 4, "bienal": 6}
+TENTATIVAS = 2
+PAUSA = 0.5
+TEMPO_LIMITE = 40  # segundos por pedido
+PERIODOS_POR_FREQ = {"anual": 12, "trimestral": 16, "mensal": 24, "decenal": 4, "bienal": 6}
 ROTULOS_TOTAL = {"total", "hm", "t", "todos", "todas", "ambos os sexos"}
 
 
@@ -62,12 +66,12 @@ def pedir(url):
     erro = None
     for t in range(1, TENTATIVAS + 1):
         try:
-            with urllib.request.urlopen(req, timeout=90) as r:
+            with urllib.request.urlopen(req, timeout=TEMPO_LIMITE) as r:
                 return json.loads(r.read().decode("utf-8"))
         except Exception as e:
             erro = e
             print(f"   tentativa {t}/{TENTATIVAS} falhou: {e}")
-            time.sleep(4 * t)
+            time.sleep(3 * t)
     raise RuntimeError(erro)
 
 
