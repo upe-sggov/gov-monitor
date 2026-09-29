@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teste de acesso à API do INE</title>
+<style>
+  :root {
+    --verde: #1F7A4D;
+    --verde-claro: #E8F2EC;
+    --vermelho: #B91C1C;
+    --vermelho-claro: #FBE4E4;
+    --tinta: #1C2B24;
+    --cinza: #5B6B63;
+    --linha: #D5DED9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--tinta);
+    background: #fff;
+    line-height: 1.5;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+  h1 { font-size: 1.6rem; margin: 0 0 8px; color: var(--verde); }
+  p.intro { color: var(--cinza); margin: 0 0 32px; }
+  form { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; margin-bottom: 24px; }
+  label { display: flex; flex-direction: column; font-size: .9rem; color: var(--cinza); gap: 4px; }
+  input {
+    font: inherit; padding: 8px 10px; width: 160px;
+    border: 1px solid var(--linha); border-radius: 4px;
+  }
+  button {
+    font: inherit; font-weight: 600; padding: 9px 18px; border: 0; border-radius: 4px;
+    background: var(--verde); color: #fff; cursor: pointer;
+  }
+  button:focus-visible, input:focus-visible { outline: 3px solid #9BC7AE; outline-offset: 2px; }
+  #resultado { border-left: 4px solid var(--linha); padding: 16px 20px; min-height: 60px; }
+  #resultado.ok { border-color: var(--verde); background: var(--verde-claro); }
+  #resultado.erro { border-color: var(--vermelho); background: var(--vermelho-claro); }
+  #resultado h2 { font-size: 1.1rem; margin: 0 0 8px; }
+  table { border-collapse: collapse; margin-top: 12px; font-size: .9rem; width: 100%; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--linha); }
+  code { background: #F1F4F2; padding: 1px 4px; border-radius: 3px; font-size: .85rem; }
+  .nota { font-size: .85rem; color: var(--cinza); margin-top: 24px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Teste de acesso à API do INE</h1>
+  <p class="intro">Verifica se esta página consegue ler dados do INE diretamente no browser.
+    Abra-a a partir do GitHub Pages, e não do ficheiro local, para o teste ser válido.</p>
+
+  <form id="form">
+    <label>Código do indicador (varcd)
+      <input id="varcd" value="0008074" inputmode="numeric" aria-describedby="dica">
+    </label>
+    <button type="submit">Testar ligação</button>
+  </form>
+  <p id="dica" class="nota" style="margin-top:-16px;margin-bottom:24px">0008074 = Índice de Preços no Consumidor (taxa de variação homóloga).</p>
+
+  <section id="resultado" aria-live="polite">A aguardar teste.</section>
+
+  <p class="nota">Pedido efetuado: <code id="url">—</code></p>
+</main>
+
+<script>
+const API = 'https://www.ine.pt/ine/json_indicador/pindica.jsp';
+const res = document.getElementById('resultado');
+
+function mostrarErro(titulo, texto) {
+  res.className = 'erro';
+  res.innerHTML = '<h2>' + titulo + '</h2><p>' + texto + '</p>';
+}
+
+async function testar(varcd) {
+  const url = API + '?op=2&varcd=' + encodeURIComponent(varcd) + '&lang=PT';
+  document.getElementById('url').textContent = url;
+  res.className = ''; res.textContent = 'A contactar o INE…';
+
+  let resposta;
+  try {
+    resposta = await fetch(url);
+  } catch (e) {
+    mostrarErro('Ligação bloqueada',
+      'O browser não conseguiu ler a resposta do INE. A causa mais provável é o INE não autorizar ' +
+      'pedidos vindos de outros sites (CORS). Confirme em F12 → Console: se aparecer uma mensagem com ' +
+      '"CORS" ou "blocked", a leitura direta não é viável e os dados terão de ser obtidos por um workflow.');
+    return;
+  }
+  if (!resposta.ok) {
+    mostrarErro('O INE respondeu com erro ' + resposta.status,
+      'A ligação funciona, mas o pedido foi recusado. Verifique o código do indicador.');
+    return;
+  }
+
+  let json;
+  try { json = await resposta.json(); }
+  catch (e) { mostrarErro('Resposta ilegível', 'O INE respondeu, mas não em formato JSON.'); return; }
+
+  const ind = Array.isArray(json) ? json[0] : json;
+  if (!ind || !ind.Dados) {
+    mostrarErro('Indicador sem dados', 'A ligação funciona, mas o INE não devolveu dados para este código.');
+    return;
+  }
+
+  const periodos = Object.keys(ind.Dados);
+  const ultimo = periodos[periodos.length - 1];
+  const linhas = (ind.Dados[ultimo] || []).slice(0, 8).map(r =>
+    '<tr><td>' + (r.geodsg || '') + '</td><td>' + (r.dim_3_t || '') + '</td><td>' + (r.valor ?? '') + '</td></tr>'
+  ).join('');
+
+  res.className = 'ok';
+  res.innerHTML =
+    '<h2>Ligação a funcionar</h2>' +
+    '<p>' + (ind.IndicadorDsg || 'Indicador ' + varcd) + '<br>' +
+    'Último período: ' + ultimo + ' · Última atualização: ' + (ind.DataUltimoAtualizacao || 'n/d') + '</p>' +
+    (linhas ? '<table><thead><tr><th>Local</th><th>Dimensão</th><th>Valor</th></tr></thead><tbody>' + linhas + '</tbody></table>' : '');
+}
+
+document.getElementById('form').addEventListener('submit', e => {
+  e.preventDefault();
+  testar(document.getElementById('varcd').value.trim());
+});
+</script>
+</body>
+</html>
