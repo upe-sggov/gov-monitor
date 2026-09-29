@@ -1,8 +1,15 @@
-# Radar INE por Área Governativa
+# Gov Monitor — Indicadores por Área Governativa
 
-Protótipo de painel pesquisável que organiza indicadores e conjuntos de dados do Instituto Nacional de Estatística (INE) pelas 16 áreas governativas do XXV Governo Constitucional, com visualizações construídas a partir de filtros e ligação direta à API oficial do INE.
+Em produção: https://celine-mestre.github.io/gov-monitor/
+
+Painel pesquisável que organiza indicadores e conjuntos de dados do Instituto Nacional de Estatística (INE) pelas 16 áreas governativas do XXV Governo Constitucional, com visualizações construídas a partir de filtros e ligação direta à API oficial do INE.
 
 Secretaria-Geral do Governo · Direção de Serviços de Suporte à Decisão · Unidade de Pesquisa e Estatísticas.
+
+## Novidades da v0.3
+
+- Nova designação do produto: **Gov Monitor** (o protótipo chamou-se «Radar INE por Área Governativa» até setembro de 2026; a mudança abrange interface, README, scripts, robô de commits e ficheiros exportados).
+- Catálogo e nota interna atualizados (dois códigos verificados: 0008074 e 0004167).
 
 ## Novidades da v0.2
 
@@ -34,11 +41,11 @@ Serviço REST de acesso livre e sem custos, documentado em www.ine.pt (Serviços
 
 Exemplo oficial da documentação (taxa de criminalidade, código 0008074): `...pindica.jsp?op=2&varcd=0008074&Dim1=S7A2015&Dim2=200&Dim3=3&lang=PT`.
 
-## Instalação no GitHub
+## Instalação e atualização no GitHub
 
-1. Criar o repositório (por exemplo na organização institucional) e enviar este conteúdo.
-2. Ativar o GitHub Pages: Settings : Pages : Deploy from a branch : `main` / raiz.
-3. O workflow `.github/workflows/atualizar-dados.yml` corre às segundas-feiras (06h30 UTC) e pode ser lançado manualmente no separador Actions. Grava `data/dados_*.json`, `data/meta_*.json` e `data/recolha.json`.
+O repositório em produção é `celine-mestre/gov-monitor`, com o GitHub Pages ativo (branch `main`, raiz). Para atualizar, substituir os ficheiros por upload (Add file : Upload files, que sobrepõe ficheiros com o mesmo nome) ou por `git push`.
+
+O workflow `.github/workflows/atualizar-dados.yml` corre às segundas-feiras (06h30 UTC) e pode ser lançado manualmente no separador Actions. Grava `data/dados_*.json`, `data/meta_*.json` e `data/recolha.json`.
 
 ## Adicionar ou completar indicadores
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radar INE por Área Governativa — SGGov · UPE</title>
+<title>Gov Monitor — Indicadores por Área Governativa · SGGov · UPE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
@@ -138,10 +138,10 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
       <img src="data:image/png;base64,SUBSTITUIR_PELO_BASE64" alt="Secretaria-Geral do Governo" onerror="this.style.display='none'">
     </div>
     <div>
-      <h1>Radar INE por Área Governativa</h1>
-      <div class="sub">Indicadores e conjuntos de dados do Instituto Nacional de Estatística, organizados pelas 16 áreas governativas · SGGov — DSSD · Unidade de Pesquisa e Estatísticas</div>
+      <h1>Gov Monitor</h1>
+      <div class="sub">Indicadores e conjuntos de dados do INE organizados pelas 16 áreas governativas · SGGov — DSSD · Unidade de Pesquisa e Estatísticas</div>
     </div>
-    <span class="selo-proto">PROTÓTIPO v0.2</span>
+    <span class="selo-proto">PROTÓTIPO v0.3</span>
   </div>
   <nav class="separadores" id="separadores">
     <button class="separador ativo" data-pag="explorar">Explorar</button>
@@ -291,7 +291,7 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
 <footer class="rodape">
   <div class="rodape-inner">
     <span>Fontes: INE — Base de Dados de Difusão (API JSON, acesso livre) · smi.ine.pt · dados.gov.pt</span>
-    <span>SGGov · Direção de Serviços de Suporte à Decisão · UPE — agosto de 2026</span>
+    <span>SGGov · Direção de Serviços de Suporte à Decisão · UPE — setembro de 2026</span>
   </div>
 </footer>
 
@@ -299,9 +299,9 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
 /* Catálogo embebido — recurso quando data/catalogo.json não está acessível
    (pré-visualização local). Em produção (GitHub Pages) o ficheiro prevalece. */
 const CATALOGO_EMBEBIDO = {
-  "versao": "0.2 — protótipo",
+  "versao": "0.3 — protótipo",
   "atualizado": "2026-08-27",
-  "nota": "Catálogo de indicadores do Radar INE por Área Governativa. Campo 'varcd' = código do indicador na Base de Dados de Difusão do INE (obrigatório para recolha via API). Entradas com varcd null estão por configurar: obter o código em www.ine.pt > Base de Dados > Alterar condições de seleção > Códigos, e as dimensões em pindicaMeta.jsp. Só o indicador 0008074 tem código verificado (exemplo oficial da documentação da API do INE).",
+  "nota": "Catálogo de indicadores do Gov Monitor por Área Governativa. Campo 'varcd' = código do indicador na Base de Dados de Difusão do INE (obrigatório para recolha via API). Entradas com varcd null estão por configurar: obter o código em www.ine.pt > Base de Dados > Alterar condições de seleção > Códigos, e as dimensões em pindicaMeta.jsp. Só o indicador 0008074 tem código verificado (exemplo oficial da documentação da API do INE).",
   "areas": [
     {
       "id": "mnegest",
@@ -1010,7 +1010,7 @@ function renderTiles(){
   });
 }
 function exportarPainel(){
-  descarregar('radar-ine_painel.json', { aviso:'Configuração de painel — Radar INE (as séries de demonstração não têm valor oficial)',
+  descarregar('gov-monitor_painel.json', { aviso:'Configuração de painel — Gov Monitor (as séries de demonstração não têm valor oficial)',
     exportado:new Date().toISOString(), tiles });
 }
 function importarPainel(ev){
@@ -1072,7 +1072,7 @@ async function iniciar(){
   document.getElementById('btn-tile').onclick = ()=>{ if (indicadorAtivo){ fecharPaineis(); adicionarTile({tipo:'indicador', id:indicadorAtivo.id}); } };
   document.getElementById('btn-json').onclick = ()=>{ const i=indicadorAtivo; if(!i) return;
     const s = serieAtiva(i.id);
-    descarregar(`radar-ine_${i.id}.json`, { aviso: s.real?null:'SÉRIE DE DEMONSTRAÇÃO — não usar como dado oficial',
+    descarregar(`gov-monitor_${i.id}.json`, { aviso: s.real?null:'SÉRIE DE DEMONSTRAÇÃO — não usar como dado oficial',
       indicador:i, serie:s, api_ine: i.varcd?{dados:INE.dados(i.varcd,i.dims_exemplo), meta:INE.meta(i.varcd), ficha:INE.ficha(i.varcd)}:null }); };
 
   document.querySelectorAll('.kpi').forEach(k=>k.onclick = ()=>abrirDrill(k.dataset.drill));
@@ -1080,7 +1080,7 @@ async function iniciar(){
   document.getElementById('comp-calcular').onclick = calcularComposto;
   document.getElementById('comp-painel').onclick = ()=>{ if (ultimoComposto) adicionarTile(ultimoComposto); };
   document.getElementById('comp-exportar').onclick = ()=>{ if (ultimoComposto)
-    descarregar('radar-ine_composto.json', {aviso:'Configuração de índice composto — validar metodologicamente antes de uso oficial', ...ultimoComposto}); };
+    descarregar('gov-monitor_composto.json', {aviso:'Configuração de índice composto — validar metodologicamente antes de uso oficial', ...ultimoComposto}); };
   document.getElementById('cruz-calcular').onclick = calcularCruzamento;
   document.getElementById('cruz-painel').onclick = ()=>{ if (ultimoCruzamento) adicionarTile(ultimoCruzamento); };
   document.getElementById('painel-exportar').onclick = exportarPainel;
