@@ -1,0 +1,29 @@
+name: Propor códigos INE
+
+on:
+  workflow_dispatch: {}     # execução manual, a partir do separador Actions
+
+permissions:
+  contents: write
+
+jobs:
+  propostas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Comparar o catálogo com o catálogo oficial do INE
+        run: python scripts/propor_varcd.py
+
+      - name: Registar propostas
+        run: |
+          git config user.name "gov-monitor-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/propostas_varcd.csv
+          git diff --cached --quiet && echo "Sem alterações." || git commit -m "Propostas de códigos INE para validação ($(date -u +%F))"
+          git push
