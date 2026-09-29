@@ -1,0 +1,30 @@
+name: Atualizar dados do INE
+
+on:
+  schedule:
+    - cron: "30 6 * * 1"   # segundas-feiras, 06h30 UTC
+  workflow_dispatch: {}     # execução manual a partir do separador Actions
+
+permissions:
+  contents: write
+
+jobs:
+  recolha:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Recolher dados via API do INE
+        run: python scripts/atualizar_dados.py
+
+      - name: Registar alterações
+        run: |
+          git config user.name "gov-monitor-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet && echo "Sem alterações." || git commit -m "Atualização automática dos dados do INE ($(date -u +%F))"
+          git push
