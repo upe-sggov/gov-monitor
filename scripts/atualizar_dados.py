@@ -1,14 +1,23 @@
 """
-Gov Monitor — recolha semanal de dados da API do INE.
- 
+Gov Monitor — recolha semanal de dados da API do INE (v2).
+
 Executado pelo GitHub Actions (.github/workflows/atualizar-dados.yml).
-Lê o catálogo de indicadores e grava, para cada indicador com código INE
-(varcd), o ficheiro data/dados_<varcd>.json que o index.html consome.
- 
-Formato gravado (o index.html lê os campos «resposta» e «_recolha»):
-  {"_recolha": "AAAA-MM-DD", "varcd": "...", "url": "...", "resposta": <JSON do INE>}
- 
-Só usa a biblioteca-padrão do Python: não requer requirements.txt.
+Para cada indicador com código INE (varcd) em data/catalogo.json:
+  1. lê a metainformação (pindicaMeta.jsp) para conhecer as dimensões,
+     os períodos disponíveis e o código de «Total» de cada dimensão;
+  2. pede os N períodos mais recentes (Dim1), com as dimensões além da
+     geografia fixadas no total (ex.: ambos os sexos, todas as idades);
+  3. grava data/dados_<varcd>.json no formato que o index.html consome.
+
+Se a metainformação não estiver disponível, recua para um único pedido
+sem dimensões (devolve apenas o período mais recente), como na v1.
+
+Formato gravado:
+  {"_recolha": "AAAA-MM-DD", "varcd": "...", "url": "...",
+   "_ordem_periodos": [...], "_totais": {"dim_3": "T", ...},
+   "resposta": [<objeto do INE com "Dados" = {período: [linhas]}>]}
+
+Só usa a biblioteca-padrão do Python.
 """
 import json
 import re
@@ -18,18 +27,21 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
- 
+
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA_DADOS = RAIZ / "data"
 CATALOGO = PASTA_DADOS / "catalogo.json"
 INDEX = RAIZ / "index.html"
 API = "https://www.ine.pt/ine/json_indicador/pindica.jsp"
+META = "https://www.ine.pt/ine/json_indicador/pindicaMeta.jsp"
 TENTATIVAS = 3
-ESPERA_ENTRE_PEDIDOS = 1.5  # segundos, por cortesia para com a API
- 
- 
+PAUSA = 0.6  # segundos entre pedidos
+PERIODOS_POR_FREQ = {"anual": 12, "trimestral": 16, "mensal": 36, "decenal": 4, "bienal": 6}
+ROTULOS_TOTAL = {"total", "hm", "t", "todos", "todas", "ambos os sexos"}
+
+
+# ---------------------------------------------------------------- utilidades
 def carregar_catalogo():
-    """Usa data/catalogo.json; se não existir, extrai o catálogo embebido no index.html."""
     if CATALOGO.exists():
         return json.loads(CATALOGO.read_text(encoding="utf-8"))
     html = INDEX.read_text(encoding="utf-8")
@@ -41,76 +53,174 @@ def carregar_catalogo():
     CATALOGO.write_text(json.dumps(catalogo, ensure_ascii=False, indent=2), encoding="utf-8")
     print("data/catalogo.json criado a partir do catálogo embebido no index.html.")
     return catalogo
- 
- 
-def construir_url(varcd, dims):
-    params = {"op": "2", "varcd": varcd, "lang": "PT"}
-    params.update(dims or {})
-    return f"{API}?{urllib.parse.urlencode(params)}"
- 
- 
+
+
 def pedir(url):
-    pedido = urllib.request.Request(url, headers={
-        "User-Agent": "gov-monitor/1.0 (SGGov; recolha semanal via GitHub Actions)",
-        "Accept": "application/json",
-    })
-    ultimo_erro = None
-    for tentativa in range(1, TENTATIVAS + 1):
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "gov-monitor/2.0 (SGGov; recolha semanal via GitHub Actions)",
+        "Accept": "application/json"})
+    erro = None
+    for t in range(1, TENTATIVAS + 1):
         try:
-            with urllib.request.urlopen(pedido, timeout=60) as r:
+            with urllib.request.urlopen(req, timeout=90) as r:
                 return json.loads(r.read().decode("utf-8"))
-        except Exception as erro:  # rede, timeout ou JSON inválido
-            ultimo_erro = erro
-            print(f"   tentativa {tentativa}/{TENTATIVAS} falhou: {erro}")
-            time.sleep(5 * tentativa)
-    raise RuntimeError(ultimo_erro)
- 
- 
-def resposta_valida(resposta):
-    raiz = resposta[0] if isinstance(resposta, list) and resposta else resposta
-    return isinstance(raiz, dict) and bool(raiz.get("Dados"))
- 
- 
+        except Exception as e:
+            erro = e
+            print(f"   tentativa {t}/{TENTATIVAS} falhou: {e}")
+            time.sleep(4 * t)
+    raise RuntimeError(erro)
+
+
+def url_dados(varcd, params):
+    p = {"op": "2", "varcd": varcd, "lang": "PT"}
+    p.update(params)
+    return f"{API}?{urllib.parse.urlencode(p)}"
+
+
+def raiz(resposta):
+    return resposta[0] if isinstance(resposta, list) and resposta else resposta
+
+
+# ----------------------------------------------------------- metainformação
+def dicts(obj):
+    """Percorre recursivamente o JSON e devolve todos os dicionários."""
+    if isinstance(obj, dict):
+        yield obj
+        for v in obj.values():
+            yield from dicts(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from dicts(v)
+
+
+def ler_categorias(meta):
+    """
+    Lê as categorias de cada dimensão a partir da metainformação, sem depender
+    dos nomes exatos das chaves: uma categoria é um dicionário com uma chave
+    que identifica a dimensão (contém 'dim'), uma com o código (contém 'cod')
+    e uma com a designação (contém 'dsg' ou 'desc').
+    Devolve {n.º da dimensão: [(codigo, designacao), ...]} pela ordem do INE.
+    """
+    cats = {}
+    for d in dicts(meta):
+        chaves = {k.lower(): k for k in d if isinstance(k, str)}
+        k_dim = next((chaves[k] for k in chaves if "dim" in k and "num" in k), None) or \
+                next((chaves[k] for k in chaves if k.startswith("dim")), None)
+        k_cod = next((chaves[k] for k in chaves if "cod" in k and "dim" not in k), None)
+        k_dsg = next((chaves[k] for k in chaves if ("dsg" in k or "desc" in k) and "dim" not in k), None)
+        if not (k_dim and k_cod and k_dsg):
+            continue
+        m = re.search(r"(\d+)", str(d[k_dim]))
+        if not m:
+            continue
+        n = int(m.group(1))
+        cats.setdefault(n, []).append((str(d[k_cod]).strip(), str(d[k_dsg]).strip()))
+    return cats
+
+
+def codigo_total(categorias):
+    for cod, dsg in categorias:
+        if dsg.lower() in ROTULOS_TOTAL or cod.upper() == "T":
+            return cod
+    return None
+
+
+def n_periodos(ind):
+    return PERIODOS_POR_FREQ.get((ind.get("periodicidade") or "").lower(), 12)
+
+
+# ------------------------------------------------------------------- recolha
+def recolher_serie(varcd, ind):
+    """Devolve (objeto INE, ordem dos períodos, totais, url) ou None se a metainformação falhar."""
+    meta = pedir(f"{META}?varcd={varcd}&lang=PT")
+    cats = ler_categorias(meta)
+    if not cats.get(1):
+        print("   metainformação sem períodos identificáveis; recuo para um único pedido.")
+        return None
+
+    totais = {}
+    for n, lista in cats.items():
+        if n >= 3:
+            t = codigo_total(lista)
+            if t is not None:
+                totais[f"dim_{n}"] = t
+
+    # ordena os períodos pelo código (a parte numérica cresce no tempo) e fica com os N mais recentes
+    periodos = sorted(cats[1], key=lambda c: re.sub(r"\D", "", c[0]).zfill(12))[-n_periodos(ind):]
+
+    r_final, dados, ordem, url_exemplo = None, {}, [], None
+    for cod, dsg in periodos:
+        params = {"Dim1": cod}
+        params.update({f"Dim{k.split('_')[1]}": v for k, v in totais.items()})
+        url = url_dados(varcd, params)
+        url_exemplo = url_exemplo or url
+        try:
+            r = raiz(pedir(url))
+        except Exception as e:
+            print(f"   período {dsg}: sem resposta ({e})")
+            continue
+        for periodo, linhas in ((r or {}).get("Dados") or {}).items():
+            if linhas:
+                dados[periodo] = linhas
+                ordem.append(periodo)
+                r_final = r
+        time.sleep(PAUSA)
+    if not dados:
+        return None
+    r_final["Dados"] = dados
+    return r_final, ordem, totais, url_exemplo
+
+
+def recolher_ultimo(varcd, ind):
+    """Recuo: um único pedido (período mais recente, todas as dimensões)."""
+    url = url_dados(varcd, ind.get("dims_exemplo") or {})
+    r = raiz(pedir(url))
+    if not r or not r.get("Dados"):
+        return None
+    return r, list(r["Dados"].keys()), {}, url
+
+
 def main():
     catalogo = carregar_catalogo()
     PASTA_DADOS.mkdir(exist_ok=True)
     hoje = datetime.now(timezone.utc).strftime("%Y-%m-%d")
- 
-    # Um ficheiro por varcd (é assim que o index.html os procura).
+
     alvos = {}
     for ind in catalogo.get("indicadores", []):
         if ind.get("varcd") and ind["varcd"] not in alvos:
             alvos[ind["varcd"]] = ind
     print(f"{len(alvos)} indicador(es) com código INE a recolher.")
- 
+
     sucessos, falhas = 0, []
     for varcd, ind in alvos.items():
-        url = construir_url(varcd, ind.get("dims_exemplo"))
         print(f"-> {varcd} · {ind.get('nome', '')[:70]}")
+        resultado = None
         try:
-            resposta = pedir(url)
-        except Exception as erro:
+            resultado = recolher_serie(varcd, ind)
+        except Exception as e:
+            print(f"   metainformação indisponível ({e}); recuo para um único pedido.")
+        if resultado is None:
+            try:
+                resultado = recolher_ultimo(varcd, ind)
+            except Exception as e:
+                print(f"   ERRO: sem resposta do INE ({e}). Ficheiro anterior mantido.")
+        if resultado is None:
             falhas.append(varcd)
-            print(f"   ERRO: sem resposta do INE ({erro}). Ficheiro anterior mantido.")
+            print("   AVISO: resposta sem dados. Ficheiro anterior mantido.")
             continue
-        if not resposta_valida(resposta):
-            falhas.append(varcd)
-            print(f"   AVISO: resposta sem dados (código ou dimensões inválidos?): {str(resposta)[:200]}")
-            continue
+        r, ordem, totais, url = resultado
         destino = PASTA_DADOS / f"dados_{varcd}.json"
-        destino.write_text(json.dumps(
-            {"_recolha": hoje, "varcd": varcd, "url": url, "resposta": resposta},
+        destino.write_text(json.dumps({
+            "_recolha": hoje, "varcd": varcd, "url": url,
+            "_ordem_periodos": ordem, "_totais": totais, "resposta": [r]},
             ensure_ascii=False, indent=1), encoding="utf-8")
         sucessos += 1
-        print(f"   gravado: data/{destino.name}")
-        time.sleep(ESPERA_ENTRE_PEDIDOS)
- 
+        print(f"   gravado: data/{destino.name} · {len(ordem)} período(s) · totais {totais or '—'}")
+
     print(f"\nConcluído: {sucessos} gravado(s), {len(falhas)} com falha {falhas if falhas else ''}")
-    # Falha o job apenas se nada foi recolhido, para o erro ficar visível no separador Actions.
     if alvos and sucessos == 0:
         sys.exit("ERRO: nenhum indicador recolhido. Verificar o acesso à API do INE a partir do GitHub.")
- 
- 
+
+
 if __name__ == "__main__":
     main()
- 
