@@ -1,6 +1,6 @@
 # Gov Monitor — Indicadores por Área Governativa
 
-Em produção: https://celine-mestre.github.io/gov-monitor/
+Em produção: https://upe-sggov.github.io/gov-monitor/
 
 Painel pesquisável que organiza indicadores e conjuntos de dados do Instituto Nacional de Estatística (INE) pelas 16 áreas governativas do XXV Governo Constitucional, com visualizações construídas a partir de filtros e ligação direta à API oficial do INE.
 
@@ -43,7 +43,7 @@ Exemplo oficial da documentação (taxa de criminalidade, código 0008074): `...
 
 ## Instalação e atualização no GitHub
 
-O repositório em produção é `celine-mestre/gov-monitor`, com o GitHub Pages ativo (branch `main`, raiz). Para atualizar, substituir os ficheiros por upload (Add file : Upload files, que sobrepõe ficheiros com o mesmo nome) ou por `git push`.
+O repositório em produção é `upe-sggov/gov-monitor` (após a transferência da conta pessoal para a organização), com o GitHub Pages ativo (branch `main`, raiz). Para atualizar, substituir os ficheiros por upload (Add file : Upload files, que sobrepõe ficheiros com o mesmo nome) ou por `git push`.
 
 O workflow `.github/workflows/atualizar-dados.yml` corre às segundas-feiras (06h30 UTC) e pode ser lançado manualmente no separador Actions. Grava `data/dados_*.json`, `data/meta_*.json` e `data/recolha.json`.
 
