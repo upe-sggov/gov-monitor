@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado": "2026-08-27",
-  "nota": "Catálogo de indicadores do Gov Monitor por Área Governativa. Campo 'varcd' = código do indicador na Base de Dados de Difusão do INE (obrigatório para recolha via API). Entradas com varcd null estão por configurar: obter o código em www.ine.pt > Base de Dados > Alterar condições de seleção > Códigos, e as dimensões em pindicaMeta.jsp. Só o indicador 0008074 tem código verificado (exemplo oficial da documentação da API do INE).",
+  "atualizado": "2026-09-29",
+  "nota": "Catálogo de indicadores do Gov Monitor por Área Governativa. Campo 'varcd' = código do indicador na Base de Dados de Difusão do INE (obrigatório para recolha via API). Entradas com varcd null estão por configurar (ver workflow «Propor códigos INE» e data/propostas_varcd.csv). Cada código configurado identifica a respetiva fonte de verificação no campo 'fonte_codigo'. Privilegiar séries em vigor (NUTS 2024, Base 2025).",
   "areas": [
     {
       "id": "mnegest",
@@ -92,8 +92,10 @@
       "fonte": "INE — Inquérito ao Emprego",
       "periodicidade": "Trimestral",
       "unidade": "%",
-      "varcd": null,
-      "verificado": false
+      "varcd": "0012136",
+      "verificado": true,
+      "designacao_ine": "Taxa de desemprego (Série 2021 - %) por Local de residência (NUTS - 2024) e Sexo; Trimestral — INE, Inquérito ao emprego",
+      "fonte_codigo": "dados.gov.pt (ficha do conjunto de dados do INE, ligação xurl/indx/0012136); verificado a 29/09/2026"
     },
     {
       "id": "ipc",
@@ -143,8 +145,10 @@
       "fonte": "INE — Estatísticas do Turismo",
       "periodicidade": "Mensal",
       "unidade": "N.º",
-      "varcd": null,
-      "verificado": false
+      "varcd": "0012088",
+      "verificado": true,
+      "designacao_ine": "Dormidas (N.º) nos estabelecimentos de alojamento turístico por Localização geográfica (NUTS - 2024) e Segmento; Mensal — INE, Inquérito à permanência de hóspedes",
+      "fonte_codigo": "dados.gov.pt (ligação xurl/indx/0012088); verificado a 29/09/2026"
     },
     {
       "id": "abandono-escolar",
@@ -173,8 +177,10 @@
       "fonte": "INE — Tábuas de Mortalidade",
       "periodicidade": "Anual",
       "unidade": "Anos",
-      "varcd": null,
-      "verificado": false
+      "varcd": "0013473",
+      "verificado": true,
+      "designacao_ine": "Esperança de vida à nascença (Metodologia 2007 - Anos) por Local de residência (NUTS - 2024); Anual — INE, Tábuas completas de mortalidade",
+      "fonte_codigo": "dados.gov.pt / data.europa.eu (ligação xurl/indx/0013473); verificado a 29/09/2026"
     },
     {
       "id": "medicos-hab",
@@ -193,8 +199,10 @@
       "fonte": "INE — IPHab",
       "periodicidade": "Trimestral",
       "unidade": "%",
-      "varcd": null,
-      "verificado": false
+      "varcd": "0014767",
+      "verificado": true,
+      "designacao_ine": "Índice de preços da habitação (Taxa de variação homóloga - Base 2025 - %); Trimestral — INE",
+      "fonte_codigo": "lista de configuração CFG_INE do projeto PULSAR (sessão técnica de 18/09/2026); confirmar pela designação devolvida na primeira recolha; verificado a 29/09/2026"
     },
     {
       "id": "licencas-construcao",
