@@ -1,5 +1,5 @@
 """
-Gov Monitor — recolha semanal de dados da API do INE (v2.2).
+Gov Monitor — recolha semanal de dados da API do INE (v2.3).
 
 Executado pelo GitHub Actions (.github/workflows/atualizar-dados.yml).
 Para cada indicador com código INE (varcd) em data/catalogo.json:
@@ -43,6 +43,7 @@ META = "https://www.ine.pt/ine/json_indicador/pindicaMeta.jsp"
 TENTATIVAS = 2
 PAUSA = 0.5
 TEMPO_LIMITE = 40  # segundos por pedido
+MAX_FALHAS_SEGUIDAS = 2  # indicadores sem qualquer resposta antes de desistir (INE indisponível)
 PERIODOS_POR_FREQ = {"anual": 12, "trimestral": 16, "mensal": 24, "decenal": 4, "bienal": 6}
 ROTULOS_TOTAL = {"total", "hm", "t", "todos", "todas", "ambos os sexos"}
 
@@ -213,8 +214,13 @@ def main():
             alvos[ind["varcd"]] = ind
     print(f"{len(alvos)} indicador(es) com código INE a recolher.")
 
-    sucessos, falhas = 0, []
+    sucessos, falhas, seguidas = 0, [], 0
     for varcd, ind in alvos.items():
+        if seguidas >= MAX_FALHAS_SEGUIDAS:
+            print(f"\nA API do INE não respondeu a {seguidas} indicadores seguidos: recolha interrompida.")
+            print("Os ficheiros anteriores foram mantidos. Voltar a correr mais tarde.")
+            falhas += [v for v in alvos if v not in falhas and not (PASTA_DADOS / f"dados_{v}.json").exists()]
+            break
         print(f"-> {varcd} · {ind.get('nome', '')[:70]}")
         resultado = None
         try:
@@ -228,8 +234,10 @@ def main():
                 print(f"   ERRO: sem resposta do INE ({e}). Ficheiro anterior mantido.")
         if resultado is None:
             falhas.append(varcd)
+            seguidas += 1
             print("   AVISO: resposta sem dados. Ficheiro anterior mantido.")
             continue
+        seguidas = 0
         r, ordem, totais, url, desag = resultado
         destino = PASTA_DADOS / f"dados_{varcd}.json"
         destino.write_text(json.dumps({
