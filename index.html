@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gov Monitor — Indicadores por Área Governativa · SGGov · UPE</title>
+<title>Gov Monitor — Indicadores por Área Governativa · Secretaria-Geral do Governo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
@@ -139,7 +139,7 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
     </div>
     <div>
       <h1>Gov Monitor</h1>
-      <div class="sub">Indicadores e conjuntos de dados do INE organizados pelas 16 áreas governativas · SGGov — DSSD · Unidade de Pesquisa e Estatísticas</div>
+      <div class="sub">Indicadores e conjuntos de dados do INE organizados pelas 16 áreas governativas · Secretaria-Geral do Governo</div>
     </div>
     <span class="selo-proto">PROTÓTIPO v1</span>
   </div>
@@ -154,7 +154,7 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
 <main class="contentor">
 
   <div class="faixa-demo">
-    <strong>Nota de demonstração:</strong> séries fictícias assinaladas com «DEMONSTRAÇÃO». A ligação à API do INE está ativa nos indicadores com código verificado (0008074 — taxa de criminalidade; 0004167 — população residente, ambos confirmados na documentação oficial da API). Os restantes códigos podem ser propostos automaticamente pelo script do catálogo oficial e validados antes de entrar em produção (ver README).
+    <strong>Nota:</strong> os indicadores com código INE verificado (etiqueta «API INE») mostram dados reais, recolhidos semanalmente da Base de Dados de Difusão do INE. Os restantes mostram séries fictícias, assinaladas com «DEMONSTRAÇÃO», até lhes ser atribuído e validado um código.
   </div>
 
   <section class="kpis" aria-label="Síntese do catálogo">
@@ -271,7 +271,7 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
       <div class="ligacoes" id="ligacoes"></div>
     </div>
     <div class="bloco acoes" style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="botao primario" id="btn-live">Carregar dados reais via API</button>
+      <button class="botao primario" id="btn-live">Atualizar a partir do INE</button>
       <button class="botao dourado" id="btn-tile">Adicionar ao meu painel</button>
       <button class="botao" id="btn-json">Descarregar JSON</button>
     </div>
@@ -291,7 +291,7 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
 <footer class="rodape">
   <div class="rodape-inner">
     <span>Fontes: INE — Base de Dados de Difusão (API JSON, acesso livre) · smi.ine.pt · dados.gov.pt</span>
-    <span>SGGov · Direção de Serviços de Suporte à Decisão · UPE — setembro de 2026</span>
+    <span>Secretaria-Geral do Governo — setembro de 2026</span>
   </div>
 </footer>
 
@@ -748,14 +748,15 @@ function abrirPainel(i){
   document.getElementById('painel-titulo').textContent = i.nome;
   document.getElementById('painel-sub').textContent = `${areaNome(i.area)} · ${i.fonte} · ${i.periodicidade} · ${i.unidade}`;
   const s = serieAtiva(i.id);
-  desenharDetalhe(s.rotulos, [{label:i.unidade||'Valor', data:s.valores}], !s.real);
-  preencherTabela(s.rotulos, s.valores);
+  desenharDetalhe(s.rotulos, s.series || [{label:i.unidade||'Valor', data:s.valores}], !s.real);
+  preencherTabela(s.rotulos, s.valores, s.geo);
+  if (s.designacao) document.getElementById('painel-titulo').textContent = s.designacao;
   const est = document.getElementById('estado-api');
   est.className='estado-api info';
   est.textContent = i.varcd
-    ? (s.real ? 'Série real do INE em memória nesta sessão.'
+    ? (s.real ? `Dados reais do INE${s.recolha ? ' (recolha do repositório em '+s.recolha+')' : ''}${s.geo ? ' · '+s.geo : ''}.`
               : 'A visualização mostra dados fictícios. Use «Carregar dados reais via API» (código '+i.varcd+').')
-    : 'Sem código INE (varcd) configurado — visualização ilustrativa. O script gerar_catalogo.py propõe códigos a partir do catálogo oficial (ver README).';
+    : 'Sem código INE configurado — visualização ilustrativa. Os códigos são propostos pelo workflow «Propor códigos INE» e validados antes de entrar no catálogo.';
   document.getElementById('ligacoes').innerHTML = i.varcd ? `
     <a target="_blank" rel="noopener" href="${INE.ficha(i.varcd)}">Ficha do indicador na Base de Dados (xurl/indx/${i.varcd})</a>
     <a target="_blank" rel="noopener" href="${INE.dados(i.varcd, i.dims_exemplo)}">Dados (JSON): pindica.jsp · op=2</a>
@@ -819,7 +820,7 @@ function ehTotal(l, totais){
     return (totais && totais[k] !== undefined) ? cod === String(totais[k]) : (cod.toUpperCase()==='T' || ROTULOS_TOTAL.has(rot));
   });
 }
-function aplicarResposta(resposta, i, ficheiro){
+function calcularSeries(resposta, ficheiro){
   const raiz = Array.isArray(resposta)?resposta[0]:resposta;
   const dados = raiz && raiz.Dados; if (!dados) throw new Error('estrutura inesperada');
   const periodos = (ficheiro && ficheiro._ordem_periodos && ficheiro._ordem_periodos.length) ? ficheiro._ordem_periodos : Object.keys(dados);
@@ -843,12 +844,30 @@ function aplicarResposta(resposta, i, ficheiro){
   const prioridade = g => { const c = codGeo[g]; if (c==='PT') return 0; if (c==='1') return 1; if (NUTS2.includes(c)) return 2; return 3; };
   const geos = Object.keys(porGeo).sort((a,b)=>prioridade(a)-prioridade(b) || a.localeCompare(b,'pt')).slice(0,6);
   const series = geos.map(g=>({label:g, data:periodos.map(p=>porGeo[g][p] ?? null)}));
-  desenharDetalhe(periodos, series, false);
   const g0 = geos[0];
   const valores0 = periodos.map(p=>porGeo[g0]?porGeo[g0][p]:null);
-  preencherTabela(periodos, valores0, g0);
-  cacheSeries[i.id] = {rotulos:periodos, valores:valores0, real:true, geo:g0};
-  if (raiz.IndicadorDsg) document.getElementById('painel-titulo').textContent = raiz.IndicadorDsg;
+  return {periodos, series, g0, valores0, designacao: raiz.IndicadorDsg || null,
+          recolha: ficheiro && ficheiro._recolha ? ficheiro._recolha : null};
+}
+function aplicarResposta(resposta, i, ficheiro){
+  const r = calcularSeries(resposta, ficheiro);
+  desenharDetalhe(r.periodos, r.series, false);
+  preencherTabela(r.periodos, r.valores0, r.g0);
+  cacheSeries[i.id] = {rotulos:r.periodos, valores:r.valores0, real:true, geo:r.g0, recolha:r.recolha, series:r.series};
+  if (r.designacao) document.getElementById('painel-titulo').textContent = r.designacao;
+}
+/* Pré-carrega, ao abrir a página, as séries reais já recolhidas para o repositório */
+async function precarregarReais(){
+  let ultima = null;
+  await Promise.all(CAT.indicadores.filter(i=>i.varcd).map(async i=>{
+    try {
+      const r = await fetch(`data/dados_${i.varcd}.json`, {cache:'no-store'}); if (!r.ok) return;
+      const j = await r.json(); const c = calcularSeries(j.resposta || j, j);
+      cacheSeries[i.id] = {rotulos:c.periodos, valores:c.valores0, real:true, geo:c.g0, recolha:c.recolha, series:c.series, designacao:c.designacao};
+      if (c.recolha && (!ultima || c.recolha > ultima)) ultima = c.recolha;
+    } catch(_){}
+  }));
+  if (ultima) document.getElementById('kpi-recolha').textContent = ultima;
 }
 
 /* ---------- KPI clicáveis (drill-down) ---------- */
@@ -1074,8 +1093,10 @@ async function iniciar(){
   document.getElementById('kpi-total').textContent = CAT.indicadores.length;
   document.getElementById('kpi-areas').textContent = CAT.areas.length;
   document.getElementById('kpi-api').textContent = CAT.indicadores.filter(i=>i.varcd).length;
+  await precarregarReais();
   try { const r = await fetch('data/recolha.json',{cache:'no-store'});
-    document.getElementById('kpi-recolha').textContent = r.ok ? (await r.json()).recolha.slice(0,10) : 'por executar';
+    if (r.ok) document.getElementById('kpi-recolha').textContent = (await r.json()).recolha.slice(0,10);
+    else if (document.getElementById('kpi-recolha').textContent.trim()==='—') document.getElementById('kpi-recolha').textContent = 'por executar';
   } catch(_){ document.getElementById('kpi-recolha').textContent = 'por executar'; }
 
   const fa = document.getElementById('filtro-area');
