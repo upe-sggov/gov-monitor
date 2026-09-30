@@ -255,7 +255,9 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
   </div>
   <div class="painel-corpo">
     <div class="bloco">
-      <h4>Visualização</h4>
+      <h4 style="display:flex;justify-content:space-between;align-items:center;gap:8px">Visualização
+        <label style="font-weight:400;font-size:.8rem;text-transform:none;letter-spacing:0;cursor:pointer"><input type="checkbox" id="chk-indice"> Índice (1.º período = 100)</label>
+      </h4>
       <div class="grafico-caixa" style="margin-top:0">
         <span class="marca-demo" id="marca-demo">DEMONSTRAÇÃO</span>
         <canvas id="grafico" height="220"></canvas>
@@ -754,7 +756,7 @@ function abrirPainel(i){
   const est = document.getElementById('estado-api');
   est.className='estado-api info';
   est.textContent = i.varcd
-    ? (s.real ? `Dados reais do INE${s.recolha ? ' (recolha do repositório em '+s.recolha+')' : ''}${s.geo ? ' · '+s.geo : ''}.`
+    ? (s.real ? `Dados reais do INE${s.recolha ? ' (recolha do repositório em '+s.recolha+')' : ''}${s.geo ? ' · '+s.geo : ''}${s.dims ? ' · '+s.dims : ''}.`
               : 'A visualização mostra dados fictícios. Use «Carregar dados reais via API» (código '+i.varcd+').')
     : 'Sem código INE configurado — visualização ilustrativa. Os códigos são propostos pelo workflow «Propor códigos INE» e validados antes de entrar no catálogo.';
   document.getElementById('ligacoes').innerHTML = i.varcd ? `
@@ -770,11 +772,19 @@ function abrirPainel(i){
 function fecharPaineis(){ ['painel','drill'].forEach(id=>document.getElementById(id).classList.remove('aberto'));
   document.getElementById('veu').classList.remove('aberto'); }
 
+let ultimoDetalhe = null;
+function emIndice(series){
+  return series.map(s=>{ const base = s.data.find(v=>v!==null && v!==undefined && v!==0);
+    return {label:s.label, data: base ? s.data.map(v=>v==null?null:Math.round(v/base*1000)/10) : s.data}; });
+}
 function desenharDetalhe(rotulos, series, ehDemo){
+  ultimoDetalhe = {rotulos, series, ehDemo};
   document.getElementById('marca-demo').style.display = ehDemo?'inline':'none';
+  const indice = document.getElementById('chk-indice').checked && series.length > 1;
+  const dados = indice ? emIndice(series) : series;
   const cores = ['#266B73','#275673','#1F735B','#F2B705','#D02117','#7A8B99'];
   novoGrafico('detalhe', document.getElementById('grafico'), {type:'line',
-    data:{labels:rotulos, datasets:series.map((s,ix)=>({label:s.label,data:s.data,
+    data:{labels:rotulos, datasets:dados.map((s,ix)=>({label:s.label,data:s.data,
       borderColor:cores[ix%cores.length],backgroundColor:cores[ix%cores.length]+'22',
       borderWidth:2,tension:.3,pointRadius:3,fill:series.length===1}))},
     options:opcoesBase(series.length>1)});
@@ -846,14 +856,17 @@ function calcularSeries(resposta, ficheiro){
   const series = geos.map(g=>({label:g, data:periodos.map(p=>porGeo[g][p] ?? null)}));
   const g0 = geos[0];
   const valores0 = periodos.map(p=>porGeo[g0]?porGeo[g0][p]:null);
-  return {periodos, series, g0, valores0, designacao: raiz.IndicadorDsg || null,
+  const exemplo = (uteis[0]||{}).l || {};
+  const dimsTexto = Object.keys(exemplo).filter(k=>/^dim_\d+_t$/.test(k))
+    .map(k=>({HM:'Ambos os sexos', T:'Total'}[exemplo[k]] || exemplo[k])).join(' · ');
+  return {periodos, series, g0, valores0, designacao: raiz.IndicadorDsg || null, dims: dimsTexto || null,
           recolha: ficheiro && ficheiro._recolha ? ficheiro._recolha : null};
 }
 function aplicarResposta(resposta, i, ficheiro){
   const r = calcularSeries(resposta, ficheiro);
   desenharDetalhe(r.periodos, r.series, false);
   preencherTabela(r.periodos, r.valores0, r.g0);
-  cacheSeries[i.id] = {rotulos:r.periodos, valores:r.valores0, real:true, geo:r.g0, recolha:r.recolha, series:r.series};
+  cacheSeries[i.id] = {rotulos:r.periodos, valores:r.valores0, real:true, geo:r.g0, recolha:r.recolha, series:r.series, dims:r.dims};
   if (r.designacao) document.getElementById('painel-titulo').textContent = r.designacao;
 }
 /* Pré-carrega, ao abrir a página, as séries reais já recolhidas para o repositório */
@@ -863,7 +876,7 @@ async function precarregarReais(){
     try {
       const r = await fetch(`data/dados_${i.varcd}.json`, {cache:'no-store'}); if (!r.ok) return;
       const j = await r.json(); const c = calcularSeries(j.resposta || j, j);
-      cacheSeries[i.id] = {rotulos:c.periodos, valores:c.valores0, real:true, geo:c.g0, recolha:c.recolha, series:c.series, designacao:c.designacao};
+      cacheSeries[i.id] = {rotulos:c.periodos, valores:c.valores0, real:true, geo:c.g0, recolha:c.recolha, series:c.series, designacao:c.designacao, dims:c.dims};
       if (c.recolha && (!ultima || c.recolha > ultima)) ultima = c.recolha;
     } catch(_){}
   }));
@@ -1116,6 +1129,7 @@ async function iniciar(){
   document.getElementById('painel-fechar').onclick = fecharPaineis;
   document.getElementById('drill-fechar').onclick = fecharPaineis;
   document.getElementById('btn-live').onclick = carregarReais;
+  document.getElementById('chk-indice').onchange = ()=>{ if (ultimoDetalhe) desenharDetalhe(ultimoDetalhe.rotulos, ultimoDetalhe.series, ultimoDetalhe.ehDemo); };
   document.getElementById('btn-tile').onclick = ()=>{ if (indicadorAtivo){ fecharPaineis(); adicionarTile({tipo:'indicador', id:indicadorAtivo.id}); } };
   document.getElementById('btn-json').onclick = ()=>{ const i=indicadorAtivo; if(!i) return;
     const s = serieAtiva(i.id);
