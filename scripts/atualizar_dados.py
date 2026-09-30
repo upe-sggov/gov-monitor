@@ -1,5 +1,5 @@
 """
-Gov Monitor — recolha semanal de dados da API do INE (v2.1).
+Gov Monitor — recolha semanal de dados da API do INE (v2.2).
 
 Executado pelo GitHub Actions (.github/workflows/atualizar-dados.yml).
 Para cada indicador com código INE (varcd) em data/catalogo.json:
@@ -7,7 +7,9 @@ Para cada indicador com código INE (varcd) em data/catalogo.json:
      os períodos disponíveis e o código de «Total» de cada dimensão;
   2. pede os N períodos mais recentes (Dim1), com as dimensões além da
      geografia fixadas no total (ex.: ambos os sexos, todas as idades);
-  3. grava data/dados_<varcd>.json no formato que o index.html consome.
+  3. para desagregação no painel, pede ainda, só para Portugal (Dim2=PT),
+     todas as categorias das restantes dimensões (sexo, grupo etário…);
+  4. grava data/dados_<varcd>.json no formato que o index.html consome.
 
 Se a metainformação não estiver disponível, recua para um único pedido
 sem dimensões (devolve apenas o período mais recente), como na v1.
@@ -15,6 +17,7 @@ sem dimensões (devolve apenas o período mais recente), como na v1.
 Formato gravado:
   {"_recolha": "AAAA-MM-DD", "varcd": "...", "url": "...",
    "_ordem_periodos": [...], "_totais": {"dim_3": "T", ...},
+   "_desagregado": {período: [linhas de Portugal com todas as categorias]},
    "resposta": [<objeto do INE com "Dados" = {período: [linhas]}>]}
 
 Só usa a biblioteca-padrão do Python.
@@ -172,7 +175,22 @@ def recolher_serie(varcd, ind):
     if not dados:
         return None
     r_final["Dados"] = dados
-    return r_final, ordem, totais, url_exemplo
+
+    # desagregação para Portugal: todas as categorias das dimensões além da geografia
+    desag = {}
+    if totais:
+        for cod, dsg in periodos:
+            try:
+                r2 = raiz(pedir(url_dados(varcd, {"Dim1": cod, "Dim2": "PT"})))
+            except Exception as e:
+                print(f"   desagregação {dsg}: sem resposta ({e})")
+                continue
+            for periodo, linhas in ((r2 or {}).get("Dados") or {}).items():
+                if linhas:
+                    desag[periodo] = linhas
+            time.sleep(PAUSA)
+        print(f"   desagregação para Portugal: {len(desag)} período(s)")
+    return r_final, ordem, totais, url_exemplo, desag
 
 
 def recolher_ultimo(varcd, ind):
@@ -181,7 +199,7 @@ def recolher_ultimo(varcd, ind):
     r = raiz(pedir(url))
     if not r or not r.get("Dados"):
         return None
-    return r, list(r["Dados"].keys()), {}, url
+    return r, list(r["Dados"].keys()), {}, url, {}
 
 
 def main():
@@ -212,11 +230,11 @@ def main():
             falhas.append(varcd)
             print("   AVISO: resposta sem dados. Ficheiro anterior mantido.")
             continue
-        r, ordem, totais, url = resultado
+        r, ordem, totais, url, desag = resultado
         destino = PASTA_DADOS / f"dados_{varcd}.json"
         destino.write_text(json.dumps({
             "_recolha": hoje, "varcd": varcd, "url": url,
-            "_ordem_periodos": ordem, "_totais": totais, "resposta": [r]},
+            "_ordem_periodos": ordem, "_totais": totais, "_desagregado": desag, "resposta": [r]},
             ensure_ascii=False, indent=1), encoding="utf-8")
         sucessos += 1
         print(f"   gravado: data/{destino.name} · {len(ordem)} período(s) · totais {totais or '—'}")
