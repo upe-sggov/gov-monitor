@@ -122,6 +122,21 @@ h2.seccao::before{content:"";width:8px;height:8px;border-radius:2px;background:v
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
 .tile{background:var(--cartao);border-radius:var(--raio);box-shadow:var(--sombra);padding:14px 16px;position:relative}
 .tile h4{font-size:12.5px;font-weight:600;color:var(--azul);padding-right:26px;margin-bottom:6px}
+.vistas-dialogo{position:fixed;inset:0;background:rgba(15,26,34,.45);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}
+.vistas-dialogo.aberto{display:flex}
+.vistas-caixa{background:var(--cartao);color:var(--texto);border-radius:var(--raio);box-shadow:0 10px 40px rgba(0,0,0,.25);padding:20px 22px;width:min(440px,100%)}
+.vistas-caixa h3{font-size:16px;color:var(--azul);margin-bottom:4px}
+.vistas-sub{font-size:12.5px;color:var(--texto2);margin-bottom:14px}
+.vista-opcao{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--linha);border-radius:8px;margin-bottom:8px;cursor:pointer;font-size:13.5px}
+.vista-opcao input{margin-top:2px}.vista-opcao.indisponivel{opacity:.5;cursor:not-allowed}.vista-opcao em{font-size:11.5px}
+.vistas-acoes{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.tile-larga{grid-column:span 2}@media (max-width:760px){.tile-larga{grid-column:auto}}
+.tile-bloco{margin-top:8px}
+.tile-valor .num{font-size:28px;font-weight:700;color:var(--azul);line-height:1.1}.tile-valor .num small{font-size:14px;font-weight:500}
+.tile-valor .det{font-size:12px;color:var(--texto2);margin-top:2px}.tile-valor .sobe{color:var(--verde)}.tile-valor .desce{color:var(--vermelho)}
+.tile .mapa-caixa svg{max-height:320px}
+.tile-fonte{font-size:10.5px;color:var(--texto2);margin-top:8px}
+@media print{.vistas-dialogo{display:none!important}.tile-larga{grid-column:auto}}
 .tile .remover{position:absolute;top:10px;right:10px;background:#FDF0EF;border:1px solid #F2C7C4;color:var(--vermelho);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:12px}
 .vazio{border:2px dashed var(--linha);border-radius:var(--raio);padding:34px;text-align:center;color:var(--texto2);font-size:13px}
 
@@ -267,7 +282,7 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
   <section class="pagina" id="pag-painel-meu">
     <div class="caixa">
       <h3>O meu painel</h3>
-      <div class="ajuda">Monte o seu painel de controlo com indicadores («Adicionar ao painel» nos cartões), índices compostos e cruzamentos. A composição vive nesta sessão; use «Exportar» para guardar a configuração em JSON (pode ser registada no repositório, ex.: <code>data/paineis/gabinete-x.json</code>) e «Importar» para a repor.</div>
+      <div class="ajuda">Monte o seu painel de controlo com indicadores («Adicionar ao painel» nos cartões, escolhendo as vistas: valor, gráfico, mapa ou tabela), índices compostos e cruzamentos. A composição vive nesta sessão; use «Exportar» para guardar a configuração em JSON (pode ser registada no repositório, ex.: <code>data/paineis/gabinete-x.json</code>) e «Importar» para a repor.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="botao" id="painel-exportar">Exportar configuração</button>
         <label class="botao" style="cursor:pointer">Importar configuração<input type="file" id="painel-importar" accept="application/json" style="display:none"></label>
@@ -333,6 +348,14 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
   <div class="painel-corpo" id="drill-corpo"></div>
 </aside>
 
+<div class="vistas-dialogo" id="vistas-dialogo" role="dialog" aria-modal="true" aria-labelledby="vistas-cab">
+  <div class="vistas-caixa">
+    <h3 id="vistas-cab">Adicionar ao meu painel</h3>
+    <div class="vistas-sub" id="vistas-titulo"></div>
+    <div id="vistas-lista"></div>
+    <div class="vistas-acoes"><button class="botao" id="vistas-cancelar">Cancelar</button><button class="botao primario" id="vistas-ok">Adicionar</button></div>
+  </div>
+</div>
 <footer class="rodape">
   <div class="rodape-inner">
     <span>Fontes: INE — Base de Dados de Difusão (API JSON, acesso livre) · smi.ine.pt · dados.gov.pt</span>
@@ -787,7 +810,7 @@ function render(){
         </div>
       </div>`;
     el.querySelector('[data-ac=detalhe]').onclick = ()=>abrirPainel(i);
-    el.querySelector('[data-ac=tile]').onclick = ()=>adicionarTile({tipo:'indicador', id:i.id});
+    el.querySelector('[data-ac=tile]').onclick = ()=>escolherVistas(i);
     gi.appendChild(el);
   });
   document.getElementById('sem-resultados').style.display = res.length?'none':'block';
@@ -950,34 +973,71 @@ function caminho(f){
   return polys.map(poly=>poly.map(anel=>'M'+anel.map(([lo,la])=>projetar(lo,la,CAIXA_CONT).join(',')).join('L')+'Z').join('')).join('');
 }
 function corEscala(t){ const a=[228,239,233], b=[31,115,91]; return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`; }
-function desenharMapa(porCod, periodos, i){
-  const bloco = document.getElementById('bloco-mapa');
-  if (!porCod || !periodos || !periodos.length){ bloco.style.display='none'; return; }
+function formatarValor(v){ return v==null ? 'n.d.' : (Math.abs(v)>=1000 ? Math.round(v).toLocaleString('pt-PT') : String(Math.round(v*100)/100).replace('.',',')); }
+/* Constrói o mapa NUTS II; devolve null se o indicador não tiver pelo menos 3 regiões NUTS II */
+function mapaSVG(porCod, periodos){
+  if (!porCod || !periodos || !periodos.length) return null;
   const ultimo = periodos[periodos.length-1];
   const norm = t => String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   const entrada = f => { const e = porCod[f.id] || porCod[f.id==='20'?'2':f.id==='30'?'3':f.id];
     return e && norm(e.nome)===norm(f.nome) ? e : null; };  // código E nome têm de coincidir (evita confundir distritos com NUTS)
   const val = f => { const e = entrada(f); return e && e.valores[ultimo]!=null ? e.valores[ultimo] : null; };
   const valores = NUTS2_PT.map(f=>val(f)).filter(v=>v!==null);
-  if (valores.length < 3){ bloco.style.display='none'; return; }
+  if (valores.length < 3) return null;
   const min = Math.min(...valores), max = Math.max(...valores);
-  const fmt = v => v==null ? 'n.d.' : (Math.abs(v)>=1000 ? Math.round(v).toLocaleString('pt-PT') : String(Math.round(v*100)/100).replace('.',','));
   const cor = v => v==null ? '#C9D3DA' : corEscala(max>min?(v-min)/(max-min):.5);
-  bloco.style.display='';
-  document.getElementById('mapa-titulo').textContent = `Mapa · NUTS II · ${ultimo}${i && i.unidade ? ' · '+i.unidade : ''}`;
-  document.getElementById('mapa-min').textContent = fmt(min); document.getElementById('mapa-max').textContent = fmt(max);
   const cont = NUTS2_PT.filter(f=>f.coords).map(f=>{ const v = val(f);
-    return `<path d="${caminho(f)}" data-id="${f.id}" fill="${cor(v)}"><title>${f.nome}: ${fmt(v)}</title></path>`; }).join('');
-  const ilhas = NUTS2_PT.filter(f=>!f.coords).map((f,k)=>{ const v = val(f), y = 300+k*52;
+    return `<path d="${caminho(f)}" data-id="${f.id}" fill="${cor(v)}"><title>${f.nome}: ${formatarValor(v)}</title></path>`; }).join('');
+  const ilhas = NUTS2_PT.filter(f=>!f.coords).map((f,k)=>{ const v = val(f), y = 300+k*52, claro = v!=null && (v-min)/(max-min||1)>.55;
     return `<g data-id="${f.id}" class="bloco-ilha" style="cursor:pointer"><rect x="14" y="${y}" width="150" height="40" rx="8" fill="${cor(v)}" stroke="var(--cartao)"/>
-      <text x="89" y="${y+17}" text-anchor="middle" font-size="10.5" fill="${v!=null && (v-min)/(max-min||1)>.55?'#fff':'var(--texto)'}">${f.nome.replace('Região Autónoma','R. A.')}</text>
-      <text x="89" y="${y+31}" text-anchor="middle" font-size="11" font-weight="600" fill="${v!=null && (v-min)/(max-min||1)>.55?'#fff':'var(--texto)'}">${fmt(v)}</text><title>${f.nome}: ${fmt(v)}</title></g>`; }).join('');
-  document.getElementById('mapa').innerHTML = `<svg viewBox="0 0 510 420" role="img" aria-label="Mapa de Portugal por NUTS II">${cont}${ilhas}</svg>`;
+      <text x="89" y="${y+17}" text-anchor="middle" font-size="10.5" fill="${claro?'#fff':'var(--texto)'}">${f.nome.replace('Região Autónoma','R. A.')}</text>
+      <text x="89" y="${y+31}" text-anchor="middle" font-size="11" font-weight="600" fill="${claro?'#fff':'var(--texto)'}">${formatarValor(v)}</text><title>${f.nome}: ${formatarValor(v)}</title></g>`; }).join('');
+  return {svg:`<svg viewBox="0 0 510 420" role="img" aria-label="Mapa de Portugal por NUTS II">${cont}${ilhas}</svg>`, min, max, ultimo, entrada};
+}
+function desenharMapa(porCod, periodos, i){
+  const bloco = document.getElementById('bloco-mapa');
+  const m = mapaSVG(porCod, periodos);
+  if (!m){ bloco.style.display='none'; return; }
+  bloco.style.display='';
+  document.getElementById('mapa-titulo').textContent = `Mapa · NUTS II · ${m.ultimo}${i && i.unidade ? ' · '+i.unidade : ''}`;
+  document.getElementById('mapa-min').textContent = formatarValor(m.min); document.getElementById('mapa-max').textContent = formatarValor(m.max);
+  document.getElementById('mapa').innerHTML = m.svg;
   document.querySelectorAll('#mapa path, #mapa .bloco-ilha').forEach(el=>el.onclick=()=>{
-    const e = entrada(NUTS2_PT.find(f=>f.id===el.dataset.id)); if (!e) return;
+    const e = m.entrada(NUTS2_PT.find(f=>f.id===el.dataset.id)); if (!e) return;
     document.querySelectorAll('#mapa .sel').forEach(x=>x.classList.remove('sel')); el.classList.add('sel');
     preencherTabela(periodos, periodos.map(p=>e.valores[p] ?? null), e.nome);
   });
+}
+
+/* ---------- Escolha das vistas ao adicionar um indicador ao painel ---------- */
+const VISTAS = [
+  {id:'valor',   nome:'Último valor em destaque'},
+  {id:'linha',   nome:'Gráfico de linhas'},
+  {id:'regioes', nome:'Gráfico de linhas por região (até 6)'},
+  {id:'mapa',    nome:'Mapa por NUTS II'},
+  {id:'tabela',  nome:'Tabela de dados (últimos 8 períodos)'},
+];
+function vistasDisponiveis(i){
+  const s = serieAtiva(i.id), disp = new Set(['valor','linha','tabela']);
+  if (s.real && s.series && s.series.length > 1) disp.add('regioes');
+  if (s.real && mapaSVG(s.porCod, s.rotulos)) disp.add('mapa');
+  return disp;
+}
+function escolherVistas(i){
+  const disp = vistasDisponiveis(i);
+  const lista = document.getElementById('vistas-lista');
+  lista.innerHTML = VISTAS.map(v=>`<label class="vista-opcao${disp.has(v.id)?'':' indisponivel'}">
+    <input type="checkbox" value="${v.id}" ${disp.has(v.id)?'':'disabled'} ${v.id==='linha'||(v.id==='mapa'&&disp.has('mapa'))?'checked':''}>
+    <span>${v.nome}${disp.has(v.id)?'':' <em>— não disponível para este indicador</em>'}</span></label>`).join('');
+  document.getElementById('vistas-titulo').textContent = i.nome;
+  const dlg = document.getElementById('vistas-dialogo'); dlg.classList.add('aberto');
+  document.getElementById('vistas-ok').onclick = ()=>{
+    const escolhidas = [...lista.querySelectorAll('input:checked')].map(x=>x.value);
+    if (!escolhidas.length){ alert('Selecione pelo menos uma vista.'); return; }
+    dlg.classList.remove('aberto');
+    adicionarTile({tipo:'indicador', id:i.id, vistas:escolhidas});
+  };
+  document.getElementById('vistas-cancelar').onclick = ()=>dlg.classList.remove('aberto');
 }
 
 /* ---------- Tema claro/escuro e ecrã inteiro ---------- */
@@ -1158,18 +1218,14 @@ function renderTiles(){
     if (tl.tipo==='indicador'){ const i = porId(tl.id); titulo = `${areaNome(i.area)} — ${i.nome}`; demo = !serieAtiva(i.id).real; }
     if (tl.tipo==='composto'){ titulo = `Índice: ${tl.nome} (${areaNome(tl.area)})`; demo = tl.demo; }
     if (tl.tipo==='cruzamento'){ titulo = `Cruzamento: ${porId(tl.a).nome} × ${porId(tl.b).nome} (r=${tl.r})`; demo = tl.demo; }
+    if (tl.tipo==='indicador'){ renderTileIndicador(el, tl, ix, titulo, demo); cont.appendChild(el); return; }
     el.innerHTML = `<h4>${titulo}</h4><button class="remover" title="Remover">✕</button>
       <div class="grafico-caixa" style="margin-top:4px;padding:8px">${demo?'<span class="marca-demo">DEMONSTRAÇÃO</span>':''}
       <canvas id="${canvasId}" height="150"></canvas></div>`;
     el.querySelector('.remover').onclick = ()=>{ tiles.splice(ix,1); renderTiles(); };
     cont.appendChild(el);
     const ctx = document.getElementById(canvasId);
-    if (tl.tipo==='indicador'){ const i = porId(tl.id), s = serieAtiva(i.id);
-      novoGrafico(canvasId, ctx, {type:'line', data:{labels:s.rotulos,
-        datasets:[{data:s.valores, borderColor:corArea(i.area), backgroundColor:corArea(i.area)+'22',
-          borderWidth:2, tension:.3, fill:true, pointRadius:2}]},
-        options:{...opcoesBase(false), plugins:{legend:{display:false}}}});
-    } else if (tl.tipo==='composto'){
+    if (tl.tipo==='composto'){
       novoGrafico(canvasId, ctx, {type:'line', data:{labels:tl.rotulos,
         datasets:[{data:tl.valores, borderColor:'#1F735B', backgroundColor:'#1F735B22',
           borderWidth:2, tension:.3, fill:true, pointRadius:2}]},
@@ -1180,6 +1236,46 @@ function renderTiles(){
         options:{...opcoesBase(false), plugins:{legend:{display:false}}}});
     }
   });
+}
+function renderTileIndicador(el, tl, ix, titulo, demo){
+  const i = porId(tl.id), s = serieAtiva(i.id), disp = vistasDisponiveis(i);
+  const vistas = (tl.vistas && tl.vistas.length ? tl.vistas : ['linha']).filter(v=>disp.has(v));
+  const geo = s.real && s.geo ? s.geo : null;
+  const partes = [];
+  const n = s.valores.length, ult = s.valores[n-1], ant = n>1 ? s.valores[n-2] : null;
+  if (vistas.includes('valor')){
+    const dif = (ult!=null && ant!=null) ? ult-ant : null;
+    partes.push(`<div class="tile-valor"><div class="num">${formatarValor(ult)}${i.unidade && i.unidade.length<=3 ? ' <small>'+i.unidade+'</small>':''}</div>
+      <div class="det">${s.rotulos[n-1]||''}${geo?' · '+geo:''}${dif==null?'':dif===0?` · sem variação face a ${s.rotulos[n-2]}`:` · <span class="${dif>0?'sobe':'desce'}">${dif>0?'▲':'▼'} ${formatarValor(Math.abs(dif))} face a ${s.rotulos[n-2]}</span>`}</div></div>`);
+  }
+  if (vistas.includes('linha'))   partes.push(`<div class="grafico-caixa tile-bloco"><canvas id="tile-l-${ix}" height="150"></canvas></div>`);
+  if (vistas.includes('regioes')) partes.push(`<div class="grafico-caixa tile-bloco"><canvas id="tile-r-${ix}" height="170"></canvas></div>`);
+  let mapa = null;
+  if (vistas.includes('mapa')){ mapa = mapaSVG(s.porCod, s.rotulos);
+    if (mapa) partes.push(`<div class="mapa-caixa tile-bloco">${mapa.svg}<div class="mapa-legenda"><span>${formatarValor(mapa.min)}</span><div class="escala"></div><span>${formatarValor(mapa.max)}</span></div>
+      <div class="mapa-fonte">${mapa.ultimo} · NUTS 2024: Eurostat GISCO · © EuroGeographics</div></div>`); }
+  if (vistas.includes('tabela')){
+    const k0 = Math.max(0, n-8);
+    partes.push(`<table class="dados tile-bloco"><thead><tr><th>Período</th><th>Valor${geo?' · '+geo:''}</th></tr></thead><tbody>${
+      s.rotulos.slice(k0).map((r,k)=>`<tr><td>${r}</td><td>${formatarValor(s.valores[k0+k])}</td></tr>`).join('')}</tbody></table>`);
+  }
+  if (vistas.includes('mapa') || vistas.includes('regioes') || vistas.length>=3) el.classList.add('tile-larga');
+  el.innerHTML = `<h4>${titulo}</h4><button class="remover" title="Remover">✕</button>
+    ${demo?'<span class="marca-demo" style="position:static;display:inline-block;margin-bottom:6px">DEMONSTRAÇÃO</span>':''}${partes.join('')}
+    ${s.real ? `<div class="tile-fonte">Fonte: INE${s.dims?' · '+s.dims:''}${s.recolha?' · recolha de '+s.recolha:''}</div>` : ''}`;
+  el.querySelector('.remover').onclick = ()=>{ tiles.splice(ix,1); renderTiles(); };
+  setTimeout(()=>{
+    if (vistas.includes('linha') && document.getElementById('tile-l-'+ix))
+      novoGrafico('tile-l-'+ix, document.getElementById('tile-l-'+ix), {type:'line', data:{labels:s.rotulos,
+        datasets:[{data:s.valores, borderColor:corArea(i.area), backgroundColor:corArea(i.area)+'22', borderWidth:2, tension:.3, fill:true, pointRadius:2}]},
+        options:{...opcoesBase(false), plugins:{legend:{display:false}}}});
+    if (vistas.includes('regioes') && document.getElementById('tile-r-'+ix)){
+      const cores = ['#266B73','#275673','#1F735B','#F2B705','#D02117','#7A8B99'];
+      novoGrafico('tile-r-'+ix, document.getElementById('tile-r-'+ix), {type:'line', data:{labels:s.rotulos,
+        datasets:s.series.map((x,k)=>({label:x.label, data:x.data, borderColor:cores[k%6], backgroundColor:cores[k%6]+'22', borderWidth:2, tension:.3, pointRadius:1.5}))},
+        options:opcoesBase(true)});
+    }
+  },0);
 }
 function exportarPainel(){
   descarregar('gov-monitor_painel.json', { aviso:'Configuração de painel — Gov Monitor (as séries de demonstração não têm valor oficial)',
@@ -1250,7 +1346,7 @@ async function iniciar(){
     document.body.classList.add('imprimir-painel'); window.print(); };
   window.addEventListener('afterprint', ()=>document.body.classList.remove('imprimir-painel'));
   document.getElementById('chk-indice').onchange = ()=>{ if (ultimoDetalhe) desenharDetalhe(ultimoDetalhe.rotulos, ultimoDetalhe.series, ultimoDetalhe.ehDemo); };
-  document.getElementById('btn-tile').onclick = ()=>{ if (indicadorAtivo){ fecharPaineis(); adicionarTile({tipo:'indicador', id:indicadorAtivo.id}); } };
+  document.getElementById('btn-tile').onclick = ()=>{ if (indicadorAtivo){ const i = indicadorAtivo; fecharPaineis(); escolherVistas(i); } };
   document.getElementById('btn-json').onclick = ()=>{ const i=indicadorAtivo; if(!i) return;
     const s = serieAtiva(i.id);
     descarregar(`gov-monitor_${i.id}.json`, { aviso: s.real?null:'SÉRIE DE DEMONSTRAÇÃO — não usar como dado oficial',
