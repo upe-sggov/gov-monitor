@@ -13,6 +13,30 @@
   --fundo:#F4F6F8; --cartao:#FFFFFF; --texto:#1E2A33; --texto2:#5B6B77; --linha:#E3E9EE;
   --raio:12px; --sombra:0 1px 3px rgba(30,42,51,.08),0 4px 14px rgba(30,42,51,.05);
 }
+html[data-theme="dark"]{--fundo:#0F1A22;--cartao:#172530;--texto:#E6EDF2;--texto2:#A5B4BF;--linha:#2A3B47;--sombra:0 1px 3px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3)}
+html[data-theme="dark"] .grafico-caixa{background:#101C25}
+html[data-theme="dark"] .faixa-demo{background:#2A2410;border-color:#5C4E1E;color:#E9D68A}
+html[data-theme="dark"] table.dados th{background:#1F2F3B;color:#CFE0EC}
+html[data-theme="dark"] .estado-api.info{background:#16283A;border-color:#2F4B62;color:#CFE0EC}
+html[data-theme="dark"] .estado-api.ok{background:#14302A;border-color:#2C5A4C;color:#BFE7D3}
+html[data-theme="dark"] .estado-api.erro{background:#3A1A1A;border-color:#6B2E2E;color:#F3C4C0}
+html[data-theme="dark"] .badge-api.ok{background:#14302A;border-color:#2C5A4C;color:#BFE7D3}
+html[data-theme="dark"] .badge-api.pendente{background:#3A1A1A;border-color:#6B2E2E;color:#F3C4C0}
+html[data-theme="dark"] input,html[data-theme="dark"] select{background:#101C25;color:var(--texto);border-color:var(--linha)}
+.acoes-topo{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn-topo{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);color:#fff;cursor:pointer;display:grid;place-items:center}
+.btn-topo:hover{background:rgba(255,255,255,.26)}
+.btn-topo svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mapa-caixa{background:#FBFCFD;border:1px solid var(--linha);border-radius:10px;padding:10px;position:relative}
+html[data-theme="dark"] .mapa-caixa{background:#101C25}
+.mapa-caixa svg{width:100%;height:auto;display:block}
+.mapa-caixa path{stroke:var(--cartao);stroke-width:.8;cursor:pointer;transition:opacity .12s}
+.mapa-caixa path:hover{opacity:.75}
+.mapa-caixa path.sel,.mapa-caixa .bloco-ilha.sel rect{stroke:var(--dourado);stroke-width:2}
+.mapa-caixa text{font-family:'Lexend',Arial,sans-serif;fill:var(--texto2)}
+.mapa-legenda{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--texto2);margin-top:6px}
+.mapa-legenda .escala{flex:1;height:8px;border-radius:4px;background:linear-gradient(90deg,#E4EFE9,#1F735B)}
+.mapa-fonte{font-size:10.5px;color:var(--texto2);margin-top:4px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Lexend',Arial,sans-serif;background:var(--fundo);color:var(--texto);font-size:14px;line-height:1.55}
 .contentor{max-width:1180px;margin:0 auto;padding:0 20px 48px}
@@ -141,7 +165,16 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
       <h1>Gov Monitor</h1>
       <div class="sub">Indicadores e conjuntos de dados do INE organizados pelas 16 áreas governativas · Secretaria-Geral do Governo</div>
     </div>
-    <span class="selo-proto">PROTÓTIPO v1</span>
+    <div class="acoes-topo">
+      <span class="selo-proto" style="margin-left:0">PROTÓTIPO v1</span>
+      <button class="btn-topo" id="btn-tema" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+        <svg id="ico-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg id="ico-lua" viewBox="0 0 24 24" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="btn-topo" id="btn-ecra" title="Ecrã inteiro" aria-label="Ecrã inteiro">
+        <svg viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg>
+      </button>
+    </div>
   </div>
   <nav class="separadores" id="separadores">
     <button class="separador ativo" data-pag="explorar">Explorar</button>
@@ -263,6 +296,13 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
         <canvas id="grafico" height="220"></canvas>
       </div>
       <div class="estado-api" id="estado-api"></div>
+    </div>
+    <div class="bloco" id="bloco-mapa" style="display:none">
+      <h4 id="mapa-titulo">Mapa · NUTS II</h4>
+      <div class="mapa-caixa"><div id="mapa"></div>
+        <div class="mapa-legenda"><span id="mapa-min">—</span><div class="escala"></div><span id="mapa-max">—</span></div>
+        <div class="mapa-fonte">Fronteiras NUTS 2024: Eurostat GISCO · © EuroGeographics para as fronteiras administrativas</div>
+      </div>
     </div>
     <div class="bloco">
       <h4>Dados</h4>
@@ -706,6 +746,13 @@ function aplicarFiltros(){
 
 function render(){
   const res = aplicarFiltros();
+  const filtrado = !!(estado.texto || estado.area || estado.period || estado.api);
+  document.getElementById('kpi-total').textContent = res.length;
+  document.getElementById('kpi-api').textContent = res.filter(i=>i.varcd).length;
+  document.getElementById('kpi-areas').textContent = filtrado ? new Set(res.map(i=>i.area)).size : CAT.areas.length;
+  document.querySelector('[data-drill="areas"] .nota').textContent = filtrado ? 'nos filtros ativos' : 'cobertura por área';
+  document.querySelector('[data-drill="indicadores"] .nota').textContent = filtrado ? 'nos filtros ativos' : 'entradas configuradas';
+  document.querySelector('[data-drill="api"] .nota').textContent = filtrado ? 'nos filtros ativos' : 'códigos INE verificados';
   const ga = document.getElementById('grelha-areas'); ga.innerHTML='';
   CAT.areas.forEach(a=>{
     const n = CAT.indicadores.filter(i=>i.area===a.id).length;
@@ -753,6 +800,7 @@ function abrirPainel(i){
   desenharDetalhe(s.rotulos, s.series || [{label:i.unidade||'Valor', data:s.valores}], !s.real);
   preencherTabela(s.rotulos, s.valores, s.geo);
   if (s.designacao) document.getElementById('painel-titulo').textContent = s.designacao;
+  desenharMapa(s.porCod, s.rotulos, i);
   const est = document.getElementById('estado-api');
   est.className='estado-api info';
   est.textContent = i.varcd
@@ -859,14 +907,16 @@ function calcularSeries(resposta, ficheiro){
   const exemplo = (uteis[0]||{}).l || {};
   const dimsTexto = Object.keys(exemplo).filter(k=>/^dim_\d+_t$/.test(k))
     .map(k=>({HM:'Ambos os sexos', T:'Total'}[exemplo[k]] || exemplo[k])).join(' · ');
-  return {periodos, series, g0, valores0, designacao: raiz.IndicadorDsg || null, dims: dimsTexto || null,
+  const porCod = {}; Object.keys(porGeo).forEach(g=>{ porCod[codGeo[g]] = {nome:g, valores:porGeo[g]}; });
+  return {periodos, series, g0, valores0, porCod, designacao: raiz.IndicadorDsg || null, dims: dimsTexto || null,
           recolha: ficheiro && ficheiro._recolha ? ficheiro._recolha : null};
 }
 function aplicarResposta(resposta, i, ficheiro){
   const r = calcularSeries(resposta, ficheiro);
   desenharDetalhe(r.periodos, r.series, false);
   preencherTabela(r.periodos, r.valores0, r.g0);
-  cacheSeries[i.id] = {rotulos:r.periodos, valores:r.valores0, real:true, geo:r.g0, recolha:r.recolha, series:r.series, dims:r.dims};
+  cacheSeries[i.id] = {rotulos:r.periodos, valores:r.valores0, real:true, geo:r.g0, recolha:r.recolha, series:r.series, dims:r.dims, porCod:r.porCod};
+  desenharMapa(r.porCod, r.periodos, i);
   if (r.designacao) document.getElementById('painel-titulo').textContent = r.designacao;
 }
 /* Pré-carrega, ao abrir a página, as séries reais já recolhidas para o repositório */
@@ -876,11 +926,71 @@ async function precarregarReais(){
     try {
       const r = await fetch(`data/dados_${i.varcd}.json`, {cache:'no-store'}); if (!r.ok) return;
       const j = await r.json(); const c = calcularSeries(j.resposta || j, j);
-      cacheSeries[i.id] = {rotulos:c.periodos, valores:c.valores0, real:true, geo:c.g0, recolha:c.recolha, series:c.series, designacao:c.designacao, dims:c.dims};
+      cacheSeries[i.id] = {rotulos:c.periodos, valores:c.valores0, real:true, geo:c.g0, recolha:c.recolha, series:c.series, designacao:c.designacao, dims:c.dims, porCod:c.porCod};
       if (c.recolha && (!ultima || c.recolha > ultima)) ultima = c.recolha;
     } catch(_){}
   }));
   if (ultima) document.getElementById('kpi-recolha').textContent = ultima;
+}
+
+const NUTS2_PT = [{"id":"30","nome":"Região Autónoma da Madeira"},{"id":"15","nome":"Algarve","tipo":"Polygon","coords":[[[-8.377,37.431],[-8.294,37.426],[-8.219,37.365],[-8.08,37.33],[-7.743,37.489],[-7.514,37.526],[-7.458,37.431],[-7.402,37.174],[-7.57,37.145],[-7.908,36.986],[-8.174,37.084],[-8.598,37.118],[-8.943,37.02],[-8.962,37.079],[-8.797,37.442],[-8.707,37.402],[-8.478,37.381],[-8.377,37.431]]]},{"id":"20","nome":"Região Autónoma dos Açores"},{"id":"1C","nome":"Alentejo","tipo":"Polygon","coords":[[[-7.233,39.278],[-7.237,39.215],[-7.15,39.169],[-7.132,39.111],[-7.057,39.116],[-6.985,39.087],[-6.959,39.026],[-7.057,38.859],[-7.203,38.751],[-7.259,38.706],[-7.255,38.616],[-7.308,38.525],[-7.308,38.449],[-7.109,38.189],[-7.057,38.178],[-6.933,38.207],[-7.008,38.035],[-7.057,38.017],[-7.105,38.035],[-7.252,37.98],[-7.293,37.86],[-7.417,37.744],[-7.507,37.595],[-7.514,37.526],[-7.743,37.489],[-8.08,37.33],[-8.219,37.365],[-8.294,37.426],[-8.377,37.431],[-8.478,37.381],[-8.707,37.402],[-8.797,37.442],[-8.797,37.858],[-8.812,37.919],[-8.875,37.966],[-8.782,38.186],[-8.793,38.39],[-8.695,38.427],[-8.737,38.515],[-8.639,38.549],[-8.643,38.613],[-8.508,38.722],[-8.515,38.753],[-8.545,38.764],[-8.317,38.849],[-8.163,38.804],[-8.178,38.862],[-8.249,38.912],[-8.227,38.987],[-8.332,39.109],[-8.174,39.233],[-7.957,39.397],[-8.002,39.474],[-7.957,39.554],[-7.859,39.519],[-7.825,39.538],[-7.69,39.639],[-7.544,39.662],[-7.492,39.591],[-7.308,39.458],[-7.312,39.355],[-7.233,39.278]]]},{"id":"1B","nome":"Península de Setúbal","tipo":"Polygon","coords":[[[-8.545,38.764],[-8.515,38.753],[-8.508,38.722],[-8.643,38.613],[-8.639,38.549],[-8.737,38.515],[-8.767,38.536],[-8.808,38.491],[-8.89,38.512],[-9.052,38.443],[-9.209,38.422],[-9.187,38.539],[-9.247,38.666],[-9.16,38.684],[-9.097,38.645],[-9.022,38.679],[-9.029,38.722],[-8.924,38.759],[-8.774,38.74],[-8.695,38.833],[-8.613,38.82],[-8.598,38.783],[-8.545,38.764]]]},{"id":"1A","nome":"Grande Lisboa","tipo":"Polygon","coords":[[[-8.932,39.018],[-8.853,39.01],[-8.969,38.828],[-9.025,38.878],[-9.16,38.706],[-9.322,38.684],[-9.457,38.706],[-9.487,38.788],[-9.423,38.936],[-9.415,39.056],[-9.224,39.01],[-9.194,38.965],[-9.108,38.928],[-9.037,38.965],[-9.022,39.008],[-8.932,39.018]]]},{"id":"1D","nome":"Oeste e Vale do Tejo","tipo":"Polygon","coords":[[[-8.287,39.795],[-8.234,39.752],[-8.223,39.641],[-8.084,39.62],[-8.047,39.734],[-7.972,39.731],[-7.953,39.673],[-7.837,39.601],[-7.825,39.538],[-7.859,39.519],[-7.957,39.554],[-8.002,39.474],[-7.957,39.397],[-8.174,39.233],[-8.332,39.109],[-8.227,38.987],[-8.249,38.912],[-8.178,38.862],[-8.163,38.804],[-8.317,38.849],[-8.545,38.764],[-8.598,38.783],[-8.613,38.82],[-8.695,38.833],[-8.774,38.74],[-8.924,38.759],[-8.969,38.828],[-8.853,39.01],[-8.932,39.018],[-9.022,39.008],[-9.037,38.965],[-9.108,38.928],[-9.194,38.965],[-9.224,39.01],[-9.415,39.056],[-9.34,39.228],[-9.355,39.355],[-9.1,39.564],[-9.04,39.742],[-8.928,39.67],[-8.92,39.604],[-8.875,39.556],[-8.902,39.466],[-8.759,39.477],[-8.68,39.559],[-8.695,39.631],[-8.647,39.684],[-8.662,39.774],[-8.493,39.832],[-8.448,39.742],[-8.287,39.795]]]},{"id":"19","nome":"Centro","tipo":"Polygon","coords":[[[-6.865,40.272],[-6.951,40.259],[-7.012,40.214],[-7.019,40.155],[-6.94,40.102],[-6.873,40.004],[-6.91,39.872],[-6.974,39.811],[-7.012,39.686],[-7.057,39.66],[-7.349,39.644],[-7.544,39.662],[-7.69,39.639],[-7.825,39.538],[-7.837,39.601],[-7.953,39.673],[-7.972,39.731],[-8.047,39.734],[-8.084,39.62],[-8.223,39.641],[-8.234,39.752],[-8.287,39.795],[-8.448,39.742],[-8.493,39.832],[-8.662,39.774],[-8.647,39.684],[-8.695,39.631],[-8.68,39.559],[-8.759,39.477],[-8.902,39.466],[-8.875,39.556],[-8.92,39.604],[-8.928,39.67],[-9.04,39.742],[-8.894,40.047],[-8.868,40.129],[-8.898,40.203],[-8.785,40.521],[-8.703,40.669],[-8.729,40.712],[-8.692,40.752],[-8.654,40.964],[-8.609,40.961],[-8.542,40.871],[-8.523,40.773],[-8.384,40.791],[-8.272,40.762],[-8.242,40.855],[-8.114,40.863],[-8.129,40.94],[-8.088,40.987],[-7.994,40.969],[-7.915,41.019],[-7.702,40.934],[-7.69,40.863],[-7.589,40.842],[-7.529,40.868],[-7.454,40.813],[-7.417,40.911],[-7.338,40.945],[-7.364,41.011],[-7.195,41.03],[-7.15,40.929],[-7.057,40.966],[-6.929,41.03],[-6.809,40.86],[-6.828,40.754],[-6.801,40.661],[-6.839,40.579],[-6.801,40.518],[-6.843,40.442],[-6.79,40.354],[-6.865,40.272]]]},{"id":"11","nome":"Norte","tipo":"Polygon","coords":[[[-8.05,41.82],[-7.897,41.92],[-7.878,41.859],[-7.705,41.902],[-7.615,41.873],[-7.6,41.835],[-7.469,41.862],[-7.417,41.817],[-7.199,41.881],[-7.165,41.979],[-7.057,41.949],[-6.985,41.971],[-6.899,41.941],[-6.835,41.949],[-6.798,41.987],[-6.715,41.939],[-6.576,41.955],[-6.561,41.888],[-6.524,41.865],[-6.554,41.748],[-6.539,41.682],[-6.325,41.669],[-6.269,41.629],[-6.205,41.586],[-6.329,41.393],[-6.479,41.295],[-6.689,41.205],[-6.809,41.048],[-6.929,41.03],[-7.057,40.966],[-7.15,40.929],[-7.195,41.03],[-7.364,41.011],[-7.338,40.945],[-7.417,40.911],[-7.454,40.813],[-7.529,40.868],[-7.589,40.842],[-7.69,40.863],[-7.702,40.934],[-7.915,41.019],[-7.994,40.969],[-8.088,40.987],[-8.129,40.94],[-8.114,40.863],[-8.242,40.855],[-8.272,40.762],[-8.384,40.791],[-8.523,40.773],[-8.542,40.871],[-8.609,40.961],[-8.654,40.964],[-8.665,41.123],[-8.782,41.401],[-8.778,41.472],[-8.812,41.613],[-8.819,41.629],[-8.875,41.748],[-8.872,41.865],[-8.864,41.873],[-8.703,41.989],[-8.624,42.045],[-8.395,42.082],[-8.339,42.09],[-8.2,42.154],[-8.174,42.082],[-8.103,42.045],[-8.148,41.989],[-8.2,41.92],[-8.167,41.82],[-8.05,41.82]]]}];
+/* ---------- Mapa NUTS II (último período) ---------- */
+const CAIXA_CONT = {geo:[-9.55,-6.15,36.95,42.2], svg:[200,10,300,400]}; // [lon min, lon max, lat min, lat max] → [x, y, largura, altura]
+function projetar(lon, lat, c){
+  const [a,b,cc,d] = c.geo, [x,y,w,h] = c.svg, ky = Math.cos((cc+d)/2*Math.PI/180);
+  const escala = Math.min(w/(b-a), h/((d-cc)/ky));
+  const larg = (b-a)*escala, alt = ((d-cc)/ky)*escala, ox = x+(w-larg)/2, oy = y+(h-alt)/2;
+  return [ (ox+(lon-a)*escala).toFixed(1), (oy+alt-((lat-cc)/ky)*escala).toFixed(1) ];
+}
+function caminho(f){
+  const polys = f.tipo==='Polygon' ? [f.coords] : f.coords;
+  return polys.map(poly=>poly.map(anel=>'M'+anel.map(([lo,la])=>projetar(lo,la,CAIXA_CONT).join(',')).join('L')+'Z').join('')).join('');
+}
+function corEscala(t){ const a=[228,239,233], b=[31,115,91]; return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`; }
+function desenharMapa(porCod, periodos, i){
+  const bloco = document.getElementById('bloco-mapa');
+  if (!porCod || !periodos || !periodos.length){ bloco.style.display='none'; return; }
+  const ultimo = periodos[periodos.length-1];
+  const norm = t => String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const entrada = f => { const e = porCod[f.id] || porCod[f.id==='20'?'2':f.id==='30'?'3':f.id];
+    return e && norm(e.nome)===norm(f.nome) ? e : null; };  // código E nome têm de coincidir (evita confundir distritos com NUTS)
+  const val = f => { const e = entrada(f); return e && e.valores[ultimo]!=null ? e.valores[ultimo] : null; };
+  const valores = NUTS2_PT.map(f=>val(f)).filter(v=>v!==null);
+  if (valores.length < 3){ bloco.style.display='none'; return; }
+  const min = Math.min(...valores), max = Math.max(...valores);
+  const fmt = v => v==null ? 'n.d.' : (Math.abs(v)>=1000 ? Math.round(v).toLocaleString('pt-PT') : String(Math.round(v*100)/100).replace('.',','));
+  const cor = v => v==null ? '#C9D3DA' : corEscala(max>min?(v-min)/(max-min):.5);
+  bloco.style.display='';
+  document.getElementById('mapa-titulo').textContent = `Mapa · NUTS II · ${ultimo}${i && i.unidade ? ' · '+i.unidade : ''}`;
+  document.getElementById('mapa-min').textContent = fmt(min); document.getElementById('mapa-max').textContent = fmt(max);
+  const cont = NUTS2_PT.filter(f=>f.coords).map(f=>{ const v = val(f);
+    return `<path d="${caminho(f)}" data-id="${f.id}" fill="${cor(v)}"><title>${f.nome}: ${fmt(v)}</title></path>`; }).join('');
+  const ilhas = NUTS2_PT.filter(f=>!f.coords).map((f,k)=>{ const v = val(f), y = 300+k*52;
+    return `<g data-id="${f.id}" class="bloco-ilha" style="cursor:pointer"><rect x="14" y="${y}" width="150" height="40" rx="8" fill="${cor(v)}" stroke="var(--cartao)"/>
+      <text x="89" y="${y+17}" text-anchor="middle" font-size="10.5" fill="${v!=null && (v-min)/(max-min||1)>.55?'#fff':'var(--texto)'}">${f.nome.replace('Região Autónoma','R. A.')}</text>
+      <text x="89" y="${y+31}" text-anchor="middle" font-size="11" font-weight="600" fill="${v!=null && (v-min)/(max-min||1)>.55?'#fff':'var(--texto)'}">${fmt(v)}</text><title>${f.nome}: ${fmt(v)}</title></g>`; }).join('');
+  document.getElementById('mapa').innerHTML = `<svg viewBox="0 0 510 420" role="img" aria-label="Mapa de Portugal por NUTS II">${cont}${ilhas}</svg>`;
+  document.querySelectorAll('#mapa path, #mapa .bloco-ilha').forEach(el=>el.onclick=()=>{
+    const e = entrada(NUTS2_PT.find(f=>f.id===el.dataset.id)); if (!e) return;
+    document.querySelectorAll('#mapa .sel').forEach(x=>x.classList.remove('sel')); el.classList.add('sel');
+    preencherTabela(periodos, periodos.map(p=>e.valores[p] ?? null), e.nome);
+  });
+}
+
+/* ---------- Tema claro/escuro e ecrã inteiro ---------- */
+function aplicarTema(t){
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('ico-sol').style.display = t==='dark'?'none':'';
+  document.getElementById('ico-lua').style.display = t==='dark'?'':'none';
+  if (window.Chart){ Chart.defaults.color = t==='dark'?'#A5B4BF':'#5B6B77'; Chart.defaults.borderColor = t==='dark'?'#2A3B47':'#E3E9EE'; }
+  try { localStorage.setItem('gov-monitor-tema', t); } catch(_){}
+  if (ultimoDetalhe) desenharDetalhe(ultimoDetalhe.rotulos, ultimoDetalhe.series, ultimoDetalhe.ehDemo);
+}
+function iniciarTema(){
+  let t = 'light'; try { t = localStorage.getItem('gov-monitor-tema') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'); } catch(_){}
+  aplicarTema(t);
+  document.getElementById('btn-tema').onclick = ()=>aplicarTema(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  document.getElementById('btn-ecra').onclick = ()=>{ if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); };
 }
 
 /* ---------- KPI clicáveis (drill-down) ---------- */
@@ -890,9 +1000,10 @@ function abrirDrill(tipo){
   const linhaInd = i => `<tr><td>${i.nome}</td><td>${areaNome(i.area)}</td>
     <td>${i.varcd ? '<span class="badge-api ok">'+i.varcd+'</span>' : '<span class="badge-api pendente">por configurar</span>'}</td></tr>`;
   if (tipo==='indicadores'){
-    t.textContent='Indicadores no catálogo'; s.textContent=CAT.indicadores.length+' entradas';
+    const lst = aplicarFiltros();
+    t.textContent='Indicadores no catálogo'; s.textContent=lst.length+' entradas'+(lst.length!==CAT.indicadores.length?' (filtros ativos)':'');
     c.innerHTML = `<table class="dados"><thead><tr><th>Indicador</th><th>Área</th><th>API</th></tr></thead>
-      <tbody>${CAT.indicadores.map(linhaInd).join('')}</tbody></table>`;
+      <tbody>${lst.map(linhaInd).join('')}</tbody></table>`;
   } else if (tipo==='areas'){
     t.textContent='Cobertura por área governativa'; s.textContent='XXV Governo Constitucional';
     c.innerHTML = `<table class="dados"><thead><tr><th>Área</th><th>Indicadores</th><th>Com API</th></tr></thead><tbody>` +
@@ -900,7 +1011,7 @@ function abrirDrill(tipo){
         return `<tr><td>${a.nome}</td><td>${l.length}</td><td>${l.filter(i=>i.varcd).length}</td></tr>`; }).join('') +
       `</tbody></table>`;
   } else if (tipo==='api'){
-    const l = CAT.indicadores.filter(i=>i.varcd);
+    const l = aplicarFiltros().filter(i=>i.varcd);
     t.textContent='Indicadores com API configurada'; s.textContent=l.length+' com código INE verificado';
     c.innerHTML = `<table class="dados"><thead><tr><th>Indicador</th><th>Área</th><th>Código</th></tr></thead>
       <tbody>${l.map(linhaInd).join('')}</tbody></table>
@@ -1129,6 +1240,7 @@ async function iniciar(){
   document.getElementById('painel-fechar').onclick = fecharPaineis;
   document.getElementById('drill-fechar').onclick = fecharPaineis;
   document.getElementById('btn-live').onclick = carregarReais;
+  iniciarTema();
   document.getElementById('chk-indice').onchange = ()=>{ if (ultimoDetalhe) desenharDetalhe(ultimoDetalhe.rotulos, ultimoDetalhe.series, ultimoDetalhe.ehDemo); };
   document.getElementById('btn-tile').onclick = ()=>{ if (indicadorAtivo){ fecharPaineis(); adicionarTile({tipo:'indicador', id:indicadorAtivo.id}); } };
   document.getElementById('btn-json').onclick = ()=>{ const i=indicadorAtivo; if(!i) return;
