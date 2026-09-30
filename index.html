@@ -896,7 +896,7 @@ async function carregarReais(){
     est.textContent='Dados reais obtidos diretamente da API do INE.';
   } catch(erro){
     est.className='estado-api erro';
-    est.textContent='Não foi possível obter os dados diretamente do browser (provável restrição CORS ou pré-visualização local). Em produção, a recolha do GitHub Actions grava data/dados_'+i.varcd+'.json e o painel lê-o automaticamente. A hiperligação «Dados (JSON)» acima responde normalmente fora do browser.';
+    est.textContent='Não foi possível obter os dados diretamente do browser (provável restrição CORS ou pré-visualização local). Os dados do painel vêm da recolha semanal do repositório; a hiperligação «Dados (JSON)» acima abre a resposta do INE diretamente.';
   }
 }
 /* Estrutura documentada: [{IndicadorCod, IndicadorDsg, Dados:{período:[{geocod, geodsg, dim_3, dim_3_t, valor}]}}]
@@ -1130,19 +1130,18 @@ function abrirDrill(tipo){
     t.textContent='Indicadores com API configurada'; s.textContent=l.length+' com código INE verificado';
     c.innerHTML = `<table class="dados"><thead><tr><th>Indicador</th><th>Área</th><th>Código</th></tr></thead>
       <tbody>${l.map(linhaInd).join('')}</tbody></table>
-      <div class="metodo" style="margin-top:14px">Para alargar a cobertura: correr <code>scripts/gerar_catalogo.py</code> (descarrega o catálogo oficial de ~260 «Principais Indicadores» do INE e propõe códigos por área) e validar as propostas antes de as copiar para <code>data/catalogo.json</code>.</div>`;
+      <div class="metodo" style="margin-top:14px">Para alargar a cobertura: correr o workflow «Propor códigos INE» (compara o catálogo com o catálogo oficial do INE e propõe códigos em <code>data/propostas_varcd.csv</code>) e validar as propostas antes de as copiar para <code>data/catalogo.json</code>.</div>`;
   } else {
     t.textContent='Estado da recolha'; s.textContent='GitHub Actions · atualizar-dados.yml';
-    c.innerHTML = `<div id="drill-recolha">A consultar data/recolha.json…</div>`;
-    fetch('data/recolha.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
-      document.getElementById('drill-recolha').innerHTML = j
-        ? `<table class="dados"><tbody>
-            <tr><td>Última execução</td><td>${j.recolha}</td></tr>
-            <tr><td>Com sucesso</td><td>${(j.sucesso||[]).join(', ')||'—'}</td></tr>
-            <tr><td>Com falha</td><td>${(j.falha||[]).map(f=>f.varcd).join(', ')||'—'}</td></tr>
-          </tbody></table>`
-        : `<div class="metodo">Ainda não existe registo de recolha. Após a publicação no GitHub, o workflow corre às segundas-feiras (06h30 UTC) ou manualmente no separador Actions, e grava data/recolha.json com o resultado.</div>`;
-    }).catch(()=>{});
+    const comCod = CAT.indicadores.filter(i=>i.varcd);
+    const linhas = comCod.map(i=>{ const x = cacheSeries[i.id] && cacheSeries[i.id].real ? cacheSeries[i.id] : null;
+      return `<tr><td>${tituloInd(i)}<br><span style="color:var(--texto2);font-size:11px">código ${i.varcd}</span></td>
+        <td>${x ? (x.recolha||'—') : '<span class="badge-api pendente">sem dados</span>'}</td>
+        <td>${x ? x.rotulos.length+' ('+x.rotulos[0]+' – '+x.rotulos[x.rotulos.length-1]+')' : '—'}</td>
+        <td>${x && x.desag && x.desag.length ? x.desag.map(d=>d.nome).join(', ') : '—'}</td></tr>`; }).join('');
+    const ok = comCod.filter(i=>cacheSeries[i.id] && cacheSeries[i.id].real).length;
+    c.innerHTML = `<div class="metodo" style="margin-bottom:12px">${ok} de ${comCod.length} indicadores com código INE têm dados recolhidos. A recolha corre automaticamente às segundas-feiras (06h30 UTC) e pode ser lançada manualmente no separador Actions do repositório.</div>
+      <table class="dados"><thead><tr><th>Indicador</th><th>Recolha</th><th>Períodos</th><th>Desagregação</th></tr></thead><tbody>${linhas}</tbody></table>`;
   }
   document.getElementById('veu').classList.add('aberto');
   document.getElementById('drill').classList.add('aberto');
@@ -1369,10 +1368,7 @@ async function iniciar(){
   document.getElementById('kpi-areas').textContent = CAT.areas.length;
   document.getElementById('kpi-api').textContent = CAT.indicadores.filter(i=>i.varcd).length;
   await precarregarReais();
-  try { const r = await fetch('data/recolha.json',{cache:'no-store'});
-    if (r.ok) document.getElementById('kpi-recolha').textContent = (await r.json()).recolha.slice(0,10);
-    else if (document.getElementById('kpi-recolha').textContent.trim()==='—') document.getElementById('kpi-recolha').textContent = 'por executar';
-  } catch(_){ document.getElementById('kpi-recolha').textContent = 'por executar'; }
+  if (document.getElementById('kpi-recolha').textContent.trim()==='—') document.getElementById('kpi-recolha').textContent = 'por executar';
 
   const fa = document.getElementById('filtro-area');
   CAT.areas.forEach(a=>fa.add(new Option(a.nome, a.id)));
