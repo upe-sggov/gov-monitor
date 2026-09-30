@@ -1,16 +1,482 @@
 {
  "_recolha": "2026-09-29",
  "varcd": "0013473",
- "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0013473&lang=PT",
+ "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0013473&lang=PT&Dim1=S16A20202022",
+ "_ordem_periodos": [
+  "2020 - 2022",
+  "2021 - 2023",
+  "2022 - 2024"
+ ],
+ "_totais": {},
  "resposta": [
   {
    "IndicadorCod": "0013473",
    "IndicadorDsg": "Esperança de vida à nascença (Metodologia 2007 - Anos) por Local de residência (NUTS - 2024); Anual - INE, Tábuas completas de mortalidade",
    "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0013473&lingua=PT",
-   "DataExtracao": "2026-09-30T00:03:41.655+01:00",
+   "DataExtracao": "2026-09-30T01:00:11.889+01:00",
    "DataUltimoAtualizacao": "2025-09-26",
    "UltimoPref": "2022 - 2024",
    "Dados": {
+    "2020 - 2022": [
+     {
+      "geocod": "2",
+      "geodsg": "Região Autónoma dos Açores",
+      "ind_string": "78,04",
+      "valor": "78.04"
+     },
+     {
+      "geocod": "20",
+      "geodsg": "Região Autónoma dos Açores",
+      "ind_string": "78,04",
+      "valor": "78.04"
+     },
+     {
+      "geocod": "200",
+      "geodsg": "Região Autónoma dos Açores",
+      "ind_string": "78,04",
+      "valor": "78.04"
+     },
+     {
+      "geocod": "1C2",
+      "geodsg": "Baixo Alentejo",
+      "ind_string": "78,30",
+      "valor": "78.3"
+     },
+     {
+      "geocod": "3",
+      "geodsg": "Região Autónoma da Madeira",
+      "ind_string": "78,77",
+      "valor": "78.77"
+     },
+     {
+      "geocod": "30",
+      "geodsg": "Região Autónoma da Madeira",
+      "ind_string": "78,77",
+      "valor": "78.77"
+     },
+     {
+      "geocod": "300",
+      "geodsg": "Região Autónoma da Madeira",
+      "ind_string": "78,77",
+      "valor": "78.77"
+     },
+     {
+      "geocod": "1C3",
+      "geodsg": "Alto Alentejo",
+      "ind_string": "79,33",
+      "valor": "79.33"
+     },
+     {
+      "geocod": "1C",
+      "geodsg": "Alentejo",
+      "ind_string": "79,88",
+      "valor": "79.88"
+     },
+     {
+      "geocod": "1C1",
+      "geodsg": "Alentejo Litoral",
+      "ind_string": "79,94",
+      "valor": "79.94"
+     },
+     {
+      "geocod": "15",
+      "geodsg": "Algarve",
+      "ind_string": "79,99",
+      "valor": "79.99"
+     },
+     {
+      "geocod": "150",
+      "geodsg": "Algarve",
+      "ind_string": "79,99",
+      "valor": "79.99"
+     },
+     {
+      "geocod": "195",
+      "geodsg": "Beira Baixa",
+      "ind_string": "80,09",
+      "valor": "80.09"
+     },
+     {
+      "geocod": "1B",
+      "geodsg": "Península de Setúbal",
+      "ind_string": "80,25",
+      "valor": "80.25"
+     },
+     {
+      "geocod": "1B0",
+      "geodsg": "Península de Setúbal",
+      "ind_string": "80,25",
+      "valor": "80.25"
+     },
+     {
+      "geocod": "11B",
+      "geodsg": "Alto Tâmega e Barroso",
+      "ind_string": "80,30",
+      "valor": "80.3"
+     },
+     {
+      "geocod": "1D3",
+      "geodsg": "Lezíria do Tejo",
+      "ind_string": "80,32",
+      "valor": "80.32"
+     },
+     {
+      "geocod": "1D1",
+      "geodsg": "Oeste",
+      "ind_string": "80,36",
+      "valor": "80.36"
+     },
+     {
+      "geocod": "1C4",
+      "geodsg": "Alentejo Central",
+      "ind_string": "80,50",
+      "valor": "80.5"
+     },
+     {
+      "geocod": "1D",
+      "geodsg": "Oeste e Vale do Tejo",
+      "ind_string": "80,56",
+      "valor": "80.56"
+     },
+     {
+      "geocod": "11D",
+      "geodsg": "Douro",
+      "ind_string": "80,66",
+      "valor": "80.66"
+     },
+     {
+      "geocod": "196",
+      "geodsg": "Beiras e Serra da Estrela",
+      "ind_string": "80,72",
+      "valor": "80.72"
+     },
+     {
+      "geocod": "11C",
+      "geodsg": "Tâmega e Sousa",
+      "ind_string": "80,83",
+      "valor": "80.83"
+     },
+     {
+      "geocod": "1D2",
+      "geodsg": "Médio Tejo",
+      "ind_string": "80,84",
+      "valor": "80.84"
+     },
+     {
+      "geocod": "1A",
+      "geodsg": "Grande Lisboa",
+      "ind_string": "80,85",
+      "valor": "80.85"
+     },
+     {
+      "geocod": "1A0",
+      "geodsg": "Grande Lisboa",
+      "ind_string": "80,85",
+      "valor": "80.85"
+     },
+     {
+      "geocod": "11E",
+      "geodsg": "Terras de Trás-os-Montes",
+      "ind_string": "80,87",
+      "valor": "80.87"
+     },
+     {
+      "geocod": "1",
+      "geodsg": "Continente",
+      "ind_string": "81,07",
+      "valor": "81.07"
+     },
+     {
+      "geocod": "111",
+      "geodsg": "Alto Minho",
+      "ind_string": "81,14",
+      "valor": "81.14"
+     },
+     {
+      "geocod": "194",
+      "geodsg": "Viseu Dão Lafões",
+      "ind_string": "81,38",
+      "valor": "81.38"
+     },
+     {
+      "geocod": "19",
+      "geodsg": "Centro",
+      "ind_string": "81,44",
+      "valor": "81.44"
+     },
+     {
+      "geocod": "11A",
+      "geodsg": "Área Metropolitana do Porto",
+      "ind_string": "81,45",
+      "valor": "81.45"
+     },
+     {
+      "geocod": "191",
+      "geodsg": "Região de Aveiro",
+      "ind_string": "81,46",
+      "valor": "81.46"
+     },
+     {
+      "geocod": "192",
+      "geodsg": "Região de Coimbra",
+      "ind_string": "81,46",
+      "valor": "81.46"
+     },
+     {
+      "geocod": "11",
+      "geodsg": "Norte",
+      "ind_string": "81,53",
+      "valor": "81.53"
+     },
+     {
+      "geocod": "193",
+      "geodsg": "Região de Leiria",
+      "ind_string": "81,66",
+      "valor": "81.66"
+     },
+     {
+      "geocod": "119",
+      "geodsg": "Ave",
+      "ind_string": "81,69",
+      "valor": "81.69"
+     },
+     {
+      "geocod": "112",
+      "geodsg": "Cávado",
+      "ind_string": "82,26",
+      "valor": "82.26"
+     }
+    ],
+    "2021 - 2023": [
+     {
+      "geocod": "2",
+      "geodsg": "Região Autónoma dos Açores",
+      "ind_string": "78,19",
+      "valor": "78.19"
+     },
+     {
+      "geocod": "20",
+      "geodsg": "Região Autónoma dos Açores",
+      "ind_string": "78,19",
+      "valor": "78.19"
+     },
+     {
+      "geocod": "200",
+      "geodsg": "Região Autónoma dos Açores",
+      "ind_string": "78,19",
+      "valor": "78.19"
+     },
+     {
+      "geocod": "1C2",
+      "geodsg": "Baixo Alentejo",
+      "ind_string": "78,50",
+      "valor": "78.5"
+     },
+     {
+      "geocod": "3",
+      "geodsg": "Região Autónoma da Madeira",
+      "ind_string": "79,07",
+      "valor": "79.07"
+     },
+     {
+      "geocod": "30",
+      "geodsg": "Região Autónoma da Madeira",
+      "ind_string": "79,07",
+      "valor": "79.07"
+     },
+     {
+      "geocod": "300",
+      "geodsg": "Região Autónoma da Madeira",
+      "ind_string": "79,07",
+      "valor": "79.07"
+     },
+     {
+      "geocod": "1C3",
+      "geodsg": "Alto Alentejo",
+      "ind_string": "79,54",
+      "valor": "79.54"
+     },
+     {
+      "geocod": "195",
+      "geodsg": "Beira Baixa",
+      "ind_string": "80,11",
+      "valor": "80.11"
+     },
+     {
+      "geocod": "1C",
+      "geodsg": "Alentejo",
+      "ind_string": "80,12",
+      "valor": "80.12"
+     },
+     {
+      "geocod": "15",
+      "geodsg": "Algarve",
+      "ind_string": "80,21",
+      "valor": "80.21"
+     },
+     {
+      "geocod": "150",
+      "geodsg": "Algarve",
+      "ind_string": "80,21",
+      "valor": "80.21"
+     },
+     {
+      "geocod": "1C1",
+      "geodsg": "Alentejo Litoral",
+      "ind_string": "80,23",
+      "valor": "80.23"
+     },
+     {
+      "geocod": "1D3",
+      "geodsg": "Lezíria do Tejo",
+      "ind_string": "80,35",
+      "valor": "80.35"
+     },
+     {
+      "geocod": "1B",
+      "geodsg": "Península de Setúbal",
+      "ind_string": "80,54",
+      "valor": "80.54"
+     },
+     {
+      "geocod": "1B0",
+      "geodsg": "Península de Setúbal",
+      "ind_string": "80,54",
+      "valor": "80.54"
+     },
+     {
+      "geocod": "1D1",
+      "geodsg": "Oeste",
+      "ind_string": "80,61",
+      "valor": "80.61"
+     },
+     {
+      "geocod": "11B",
+      "geodsg": "Alto Tâmega e Barroso",
+      "ind_string": "80,65",
+      "valor": "80.65"
+     },
+     {
+      "geocod": "1C4",
+      "geodsg": "Alentejo Central",
+      "ind_string": "80,73",
+      "valor": "80.73"
+     },
+     {
+      "geocod": "1D",
+      "geodsg": "Oeste e Vale do Tejo",
+      "ind_string": "80,77",
+      "valor": "80.77"
+     },
+     {
+      "geocod": "196",
+      "geodsg": "Beiras e Serra da Estrela",
+      "ind_string": "80,87",
+      "valor": "80.87"
+     },
+     {
+      "geocod": "1D2",
+      "geodsg": "Médio Tejo",
+      "ind_string": "80,87",
+      "valor": "80.87"
+     },
+     {
+      "geocod": "11D",
+      "geodsg": "Douro",
+      "ind_string": "81,08",
+      "valor": "81.08"
+     },
+     {
+      "geocod": "11C",
+      "geodsg": "Tâmega e Sousa",
+      "ind_string": "81,14",
+      "valor": "81.14"
+     },
+     {
+      "geocod": "1A",
+      "geodsg": "Grande Lisboa",
+      "ind_string": "81,15",
+      "valor": "81.15"
+     },
+     {
+      "geocod": "1A0",
+      "geodsg": "Grande Lisboa",
+      "ind_string": "81,15",
+      "valor": "81.15"
+     },
+     {
+      "geocod": "11E",
+      "geodsg": "Terras de Trás-os-Montes",
+      "ind_string": "81,17",
+      "valor": "81.17"
+     },
+     {
+      "geocod": "1",
+      "geodsg": "Continente",
+      "ind_string": "81,31",
+      "valor": "81.31"
+     },
+     {
+      "geocod": "194",
+      "geodsg": "Viseu Dão Lafões",
+      "ind_string": "81,49",
+      "valor": "81.49"
+     },
+     {
+      "geocod": "111",
+      "geodsg": "Alto Minho",
+      "ind_string": "81,50",
+      "valor": "81.5"
+     },
+     {
+      "geocod": "19",
+      "geodsg": "Centro",
+      "ind_string": "81,57",
+      "valor": "81.57"
+     },
+     {
+      "geocod": "191",
+      "geodsg": "Região de Aveiro",
+      "ind_string": "81,58",
+      "valor": "81.58"
+     },
+     {
+      "geocod": "192",
+      "geodsg": "Região de Coimbra",
+      "ind_string": "81,61",
+      "valor": "81.61"
+     },
+     {
+      "geocod": "193",
+      "geodsg": "Região de Leiria",
+      "ind_string": "81,77",
+      "valor": "81.77"
+     },
+     {
+      "geocod": "11A",
+      "geodsg": "Área Metropolitana do Porto",
+      "ind_string": "81,78",
+      "valor": "81.78"
+     },
+     {
+      "geocod": "11",
+      "geodsg": "Norte",
+      "ind_string": "81,82",
+      "valor": "81.82"
+     },
+     {
+      "geocod": "119",
+      "geodsg": "Ave",
+      "ind_string": "81,91",
+      "valor": "81.91"
+     },
+     {
+      "geocod": "112",
+      "geodsg": "Cávado",
+      "ind_string": "82,62",
+      "valor": "82.62"
+     }
+    ],
     "2022 - 2024": [
      {
       "geocod": "2",
