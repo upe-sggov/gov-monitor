@@ -285,10 +285,11 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
   <section class="pagina" id="pag-painel-meu">
     <div class="caixa">
       <h3>O meu painel</h3>
-      <div class="ajuda">Monte o seu painel de controlo com indicadores («Adicionar ao painel» nos cartões, escolhendo as vistas: valor, gráfico, mapa ou tabela), índices compostos e cruzamentos. A composição vive nesta sessão; use «Exportar» para guardar a configuração em JSON (pode ser registada no repositório, ex.: <code>data/paineis/gabinete-x.json</code>) e «Importar» para a repor.</div>
+      <div class="ajuda">Monte o seu painel de controlo com indicadores («Adicionar ao painel» nos cartões, escolhendo as vistas: valor, gráfico, mapa ou tabela), índices compostos e cruzamentos. A composição vive nesta sessão: «Guardar configuração» grava a seleção num pequeno ficheiro, que se volta a carregar aqui com «Abrir configuração» — mais tarde, noutro computador ou por um colega —, já com os dados mais recentes; «Descarregar imagem» e «Imprimir / PDF» produzem uma cópia do painel tal como está.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="botao" id="painel-exportar">Exportar configuração</button>
-        <label class="botao" style="cursor:pointer">Importar configuração<input type="file" id="painel-importar" accept="application/json" style="display:none"></label>
+        <button class="botao" id="painel-exportar" title="Grava a seleção de indicadores e vistas num ficheiro, para voltar a montar este painel mais tarde">Guardar configuração</button>
+        <label class="botao" style="cursor:pointer" title="Reabre um painel guardado anteriormente">Abrir configuração<input type="file" id="painel-importar" accept="application/json" style="display:none"></label>
+        <button class="botao" id="painel-png" title="Descarrega uma imagem do painel, para apresentações ou emails">Descarregar imagem (PNG)</button>
         <button class="botao" id="painel-imprimir">Imprimir / PDF</button>
       </div>
     </div>
@@ -1342,6 +1343,41 @@ function importarPainel(ev){
     } catch(_){ alert('Ficheiro JSON inválido.'); } };
   leitor.readAsText(f); ev.target.value='';
 }
+/* ---------- Imagem (PNG) do painel: cabeçalho + data + mosaicos ---------- */
+function carregarScript(url){ return new Promise((ok,erro)=>{ const e=document.createElement('script'); e.src=url; e.onload=ok; e.onerror=erro; document.head.appendChild(e); }); }
+async function descarregarImagemPainel(){
+  if (!tiles.length){ alert('O painel está vazio: adicione indicadores, índices ou cruzamentos antes de descarregar a imagem.'); return; }
+  const botao = document.getElementById('painel-png'), textoOriginal = botao.textContent;
+  botao.disabled = true; botao.textContent = 'A preparar a imagem…';
+  try {
+    if (!window.html2canvas) await carregarScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    const estilo = getComputedStyle(document.body), fundo = estilo.getPropertyValue('--fundo').trim() || '#F4F6F8';
+    const corTexto = estilo.getPropertyValue('--texto').trim() || '#1E2A33', corTexto2 = estilo.getPropertyValue('--texto2').trim() || '#5B6B77';
+    const escala = 2;
+    const mosaicos = await html2canvas(document.getElementById('tiles'), {backgroundColor: fundo, scale: escala, useCORS: true, logging: false, ignoreElements: el=>el.classList && el.classList.contains('remover')});
+    const margem = 24*escala, cab = 86*escala;
+    const final = document.createElement('canvas');
+    final.width = mosaicos.width + 2*margem; final.height = mosaicos.height + cab + 2*margem;
+    const ctx = final.getContext('2d');
+    ctx.fillStyle = fundo; ctx.fillRect(0,0,final.width,final.height);
+    const logo = document.querySelector('.logo-slot img');
+    if (logo && logo.complete) ctx.drawImage(logo, margem, margem, 52*escala, 52*escala*(logo.naturalHeight/logo.naturalWidth||1));
+    const x = margem + 66*escala;
+    ctx.fillStyle = corTexto; ctx.font = `600 ${22*escala}px Lexend, Arial, sans-serif`;
+    ctx.fillText('Gov Monitor — O meu painel', x, margem + 24*escala);
+    ctx.fillStyle = corTexto2; ctx.font = `${12*escala}px Lexend, Arial, sans-serif`;
+    const data = new Date().toLocaleDateString('pt-PT',{day:'numeric',month:'long',year:'numeric'});
+    ctx.fillText(`Secretaria-Geral do Governo · ${data} · Fonte: INE`, x, margem + 46*escala);
+    ctx.fillStyle = '#D02117'; ctx.fillRect(margem, margem + 66*escala, final.width - 2*margem, 3*escala);
+    ctx.drawImage(mosaicos, margem, margem + cab);
+    const blob = await new Promise(r=>final.toBlob(r,'image/png'));
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `gov-monitor_painel_${new Date().toISOString().slice(0,10)}.png`;
+    document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  } catch(e){
+    alert('Não foi possível gerar a imagem neste browser. Use «Imprimir / PDF» como alternativa.');
+  } finally { botao.disabled = false; botao.textContent = textoOriginal; }
+}
 function descarregar(nome, objeto){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify(objeto,null,2)],{type:'application/json'}));
@@ -1409,6 +1445,7 @@ async function iniciar(){
   document.getElementById('cruz-calcular').onclick = calcularCruzamento;
   document.getElementById('cruz-painel').onclick = ()=>{ if (ultimoCruzamento) adicionarTile(ultimoCruzamento); };
   document.getElementById('painel-exportar').onclick = exportarPainel;
+  document.getElementById('painel-png').onclick = descarregarImagemPainel;
   document.getElementById('painel-importar').onchange = importarPainel;
 
   render();
