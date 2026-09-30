@@ -869,11 +869,12 @@ function desenharDetalhe(rotulos, series, ehDemo){
       borderWidth:2,tension:.3,pointRadius:3,fill:series.length===1}))},
     options:opcoesBase(series.length>1)});
 }
+function formatarNumero(v){ const n = Number(v); return Number.isFinite(n) ? n.toLocaleString('pt-PT',{maximumFractionDigits:2}) : String(v); }
 function preencherTabela(rotulos, valores, geo){
   const th = document.querySelector('#tabela-corpo') && document.querySelector('#tabela-corpo').closest('table').querySelector('thead th:last-child');
   if (th) th.textContent = geo ? `Valor · ${geo}` : 'Valor';
   document.getElementById('tabela-corpo').innerHTML =
-    rotulos.map((r,ix)=>`<tr><td>${r}</td><td>${valores[ix] ?? '—'}</td></tr>`).join('');
+    rotulos.map((r,ix)=>`<tr><td>${r}</td><td>${valores[ix]==null ? '—' : formatarNumero(valores[ix])}</td></tr>`).join('');
 }
 
 /* ---------- Dados reais: recolha do repositório -> API direta ---------- */
@@ -1026,7 +1027,7 @@ function montarDesagregacao(s){
     est.textContent = `Dados reais do INE${s.recolha ? ' (recolha do repositório em '+s.recolha+')' : ''} · Portugal · por ${d.nome.toLowerCase()} · restantes dimensões no total.`;
   });
 }
-function formatarValor(v){ return v==null ? 'n.d.' : (Math.abs(v)>=1000 ? Math.round(v).toLocaleString('pt-PT') : String(Math.round(v*100)/100).replace('.',',')); }
+function formatarValor(v){ return v==null ? 'n.d.' : (Math.abs(v)>=1000 ? Math.round(v).toLocaleString('pt-PT') : formatarNumero(Math.round(v*100)/100)); }
 /* Constrói o mapa NUTS II; devolve null se o indicador não tiver pelo menos 3 regiões NUTS II */
 function mapaSVG(porCod, periodos){
   if (!porCod || !periodos || !periodos.length) return null;
@@ -1263,6 +1264,14 @@ function renderTiles(){
   document.getElementById('conta-tiles').textContent = tiles.length?`(${tiles.length})`:'';
   const cont = document.getElementById('tiles'); cont.innerHTML='';
   document.getElementById('tiles-vazio').style.display = tiles.length?'none':'block';
+  // mosaicos de configurações antigas cujo indicador já não existe no catálogo são ignorados
+  const validos = tiles.filter(tl=> tl.tipo==='composto' || (tl.tipo==='indicador' && porId(tl.id)) || (tl.tipo==='cruzamento' && porId(tl.a) && porId(tl.b)));
+  if (validos.length < tiles.length){
+    const n = tiles.length - validos.length; tiles.length = 0; validos.forEach(t=>tiles.push(t));
+    setTimeout(()=>alert(`${n} elemento(s) do painel referiam indicadores que já não existem no catálogo e foram ignorados.`),0);
+    document.getElementById('conta-tiles').textContent = tiles.length?`(${tiles.length})`:'';
+    document.getElementById('tiles-vazio').style.display = tiles.length?'none':'block';
+  }
   tiles.forEach((tl,ix)=>{
     const el = document.createElement('div'); el.className='tile';
     const canvasId = 'tile-c-'+ix;
