@@ -151,7 +151,9 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
 .rodape{margin-top:34px;border-top:3px solid var(--vermelho);background:linear-gradient(100deg,var(--azul),var(--verde));color:#fff;font-size:11.5px}
 .rodape-inner{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;opacity:.95}
 @media(max-width:640px){.cabecalho h1{font-size:17px}.selo-proto{margin-left:0}}
-@media print{.barra,.acoes,.selo-proto,.separadores,.tile .remover{display:none}.cartao-ind,.tile,.caixa{break-inside:avoid}}
+@media print{.barra,.acoes,.acoes-topo,.selo-proto,.separadores,.tile .remover,.painel,.drill,.veu{display:none}.cartao-ind,.tile,.caixa{break-inside:avoid}.cabecalho{background:none!important;color:#1E2A33!important;box-shadow:none!important}.cabecalho .sub{color:#5B6B77!important}html[data-theme="dark"] body{background:#fff;color:#1E2A33}}
+/* Impressão de «O meu painel»: só o cabeçalho, a data e os mosaicos */
+@media print{body.imprimir-painel main>*:not(#pag-painel-meu),body.imprimir-painel #pag-painel-meu>.caixa,body.imprimir-painel .rodape{display:none!important}body.imprimir-painel #pag-painel-meu{display:block!important}.data-impressao{display:none}body.imprimir-painel .data-impressao{display:block;font-size:12px;color:#5B6B77;margin:0 0 12px}}
 </style>
 </head>
 <body>
@@ -269,9 +271,10 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="botao" id="painel-exportar">Exportar configuração</button>
         <label class="botao" style="cursor:pointer">Importar configuração<input type="file" id="painel-importar" accept="application/json" style="display:none"></label>
-        <button class="botao" onclick="window.print()">Imprimir / PDF</button>
+        <button class="botao" id="painel-imprimir">Imprimir / PDF</button>
       </div>
     </div>
+    <div class="data-impressao" id="data-impressao"></div>
     <div class="tiles" id="tiles"></div>
     <div class="vazio" id="tiles-vazio">O painel está vazio. Adicione indicadores a partir do separador «Explorar», ou índices e cruzamentos a partir dos respetivos construtores.</div>
   </section>
@@ -1241,6 +1244,11 @@ async function iniciar(){
   document.getElementById('drill-fechar').onclick = fecharPaineis;
   document.getElementById('btn-live').onclick = carregarReais;
   iniciarTema();
+  document.getElementById('painel-imprimir').onclick = ()=>{
+    if (!tiles.length){ alert('O painel está vazio: adicione indicadores, índices ou cruzamentos antes de imprimir.'); return; }
+    document.getElementById('data-impressao').textContent = 'O meu painel · ' + new Date().toLocaleDateString('pt-PT',{day:'numeric',month:'long',year:'numeric'});
+    document.body.classList.add('imprimir-painel'); window.print(); };
+  window.addEventListener('afterprint', ()=>document.body.classList.remove('imprimir-painel'));
   document.getElementById('chk-indice').onchange = ()=>{ if (ultimoDetalhe) desenharDetalhe(ultimoDetalhe.rotulos, ultimoDetalhe.series, ultimoDetalhe.ehDemo); };
   document.getElementById('btn-tile').onclick = ()=>{ if (indicadorAtivo){ fecharPaineis(); adicionarTile({tipo:'indicador', id:indicadorAtivo.id}); } };
   document.getElementById('btn-json').onclick = ()=>{ const i=indicadorAtivo; if(!i) return;
