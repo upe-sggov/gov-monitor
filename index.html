@@ -137,6 +137,9 @@ h2.seccao::before{content:"";width:8px;height:8px;border-radius:2px;background:v
 .tile .mapa-caixa svg{max-height:320px}
 .tile-fonte{font-size:10.5px;color:var(--texto2);margin-top:8px}
 @media print{.vistas-dialogo{display:none!important}.tile-larga{grid-column:auto}}
+.desag-barra{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:12px;color:var(--texto2)}
+.desag-barra button{border:1px solid var(--linha);background:var(--cartao);color:var(--texto);border-radius:999px;padding:4px 12px;font:inherit;font-size:12px;cursor:pointer}
+.desag-barra button.ativo{background:var(--teal);border-color:var(--teal);color:#fff}
 .tile .remover{position:absolute;top:10px;right:10px;background:#FDF0EF;border:1px solid #F2C7C4;color:var(--vermelho);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:12px}
 .vazio{border:2px dashed var(--linha);border-radius:var(--raio);padding:34px;text-align:center;color:var(--texto2);font-size:13px}
 
@@ -309,6 +312,7 @@ table.dados td{padding:7px 10px;border-bottom:1px solid var(--linha)}
       <h4 style="display:flex;justify-content:space-between;align-items:center;gap:8px">Visualização
         <label style="font-weight:400;font-size:.8rem;text-transform:none;letter-spacing:0;cursor:pointer"><input type="checkbox" id="chk-indice"> Índice (1.º período = 100)</label>
       </h4>
+      <div class="desag-barra" id="desag-barra" style="display:none"></div>
       <div class="grafico-caixa" style="margin-top:0">
         <span class="marca-demo" id="marca-demo">DEMONSTRAÇÃO</span>
         <canvas id="grafico" height="220"></canvas>
@@ -799,7 +803,7 @@ function render(){
     el.innerHTML = `
       <div class="cartao-topo" style="background:${cor}">${svgIcone(i.area)}<span class="area-nome">${areaNome(i.area)}</span></div>
       <div class="cartao-corpo">
-        <h3>${i.nome}</h3>
+        <h3>${tituloInd(i)}</h3>
         ${sparkline(i.id, cor)}
         <div class="meta"><span>${i.fonte}</span><span>${i.periodicidade}</span><span>${i.unidade}</span></div>
         <span class="badge-api ${i.varcd?'ok':'pendente'}">${i.varcd?'API INE · código '+i.varcd:'código INE por configurar'}</span>
@@ -825,9 +829,10 @@ function abrirPainel(i){
   const s = serieAtiva(i.id);
   desenharDetalhe(s.rotulos, s.series || [{label:i.unidade||'Valor', data:s.valores}], !s.real);
   preencherTabela(s.rotulos, s.valores, s.geo);
-  if (s.designacao) document.getElementById('painel-titulo').textContent = s.designacao;
+  if (s.designacao) document.getElementById('painel-titulo').textContent = tituloCurto(s.designacao);
   desenharMapa(s.porCod, s.rotulos, i);
-  const est = document.getElementById('estado-api');
+  montarDesagregacao(s);
+  const est = document.getElementById('estado-api'); delete est.dataset.base;
   est.className='estado-api info';
   est.textContent = i.varcd
     ? (s.real ? `Dados reais do INE${s.recolha ? ' (recolha do repositório em '+s.recolha+')' : ''}${s.geo ? ' · '+s.geo : ''}${s.dims ? ' · '+s.dims : ''}.`
@@ -904,6 +909,31 @@ function ehTotal(l, totais){
     return (totais && totais[k] !== undefined) ? cod === String(totais[k]) : (cod.toUpperCase()==='T' || ROTULOS_TOTAL.has(rot));
   });
 }
+/* Título curto: a medida, sem as dimensões («População residente (N.º)») */
+function tituloCurto(dsg){ if (!dsg) return null; const t = dsg.split(';')[0]; const k = t.search(/ por /); return (k>0 ? t.slice(0,k) : t).trim(); }
+function tituloInd(i){ const s = cacheSeries[i.id]; return (s && s.real && s.designacao) ? tituloCurto(s.designacao) : i.nome; }
+/* Nomes das dimensões a partir da designação: «por Local de residência, Sexo e Grupo etário (…)» */
+function nomesDimensoes(dsg, n){
+  const t = String(dsg||'').split(';')[0], k = t.search(/ por /); if (k<0) return [];
+  const partes = t.slice(k+5).split(/, | e (?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])/).map(x=>x.replace(/\s*\(.*?\)\s*$/,'').trim()).filter(Boolean);
+  return partes.length > n ? partes.slice(partes.length-n) : partes;   // descarta a geografia, quando indicada
+}
+const ROTULOS_CAT = {HM:'Ambos os sexos', H:'Homens', M:'Mulheres'};
+function calcularDesagregacao(ficheiro, periodos, designacao){
+  const des = ficheiro && ficheiro._desagregado; if (!des || !Object.keys(des).length) return [];
+  const totais = ficheiro._totais || {}, dims = Object.keys(totais).sort();
+  const nomes = nomesDimensoes(designacao, dims.length);
+  return dims.map((d,k)=>{
+    const cats = new Map();
+    Object.values(des).forEach(ls=>ls.forEach(l=>{ if (l[d]!==undefined && !cats.has(String(l[d]))) cats.set(String(l[d]), l[d+'_t']); }));
+    const outrasTotal = l => dims.every(o=>o===d || String(l[o])===String(totais[o]));
+    const series = [...cats.entries()].slice(0,8).map(([cod,rot])=>({label: ROTULOS_CAT[rot]||rot,
+      data: periodos.map(p=>{ const l = (des[p]||[]).find(x=>String(x[d])===cod && outrasTotal(x));
+        const v = l && l.valor!==undefined && l.valor!=='' ? parseFloat(String(l.valor).replace(',','.')) : null; return Number.isFinite(v)?v:null; })}))
+      .filter(x=>x.data.some(v=>v!==null));
+    return {dim:d, nome: nomes[k] || ('Dimensão '+d.split('_')[1]), series};
+  }).filter(x=>x.series.length>1);
+}
 function calcularSeries(resposta, ficheiro){
   const raiz = Array.isArray(resposta)?resposta[0]:resposta;
   const dados = raiz && raiz.Dados; if (!dados) throw new Error('estrutura inesperada');
@@ -934,16 +964,18 @@ function calcularSeries(resposta, ficheiro){
   const dimsTexto = Object.keys(exemplo).filter(k=>/^dim_\d+_t$/.test(k))
     .map(k=>({HM:'Ambos os sexos', T:'Total'}[exemplo[k]] || exemplo[k])).join(' · ');
   const porCod = {}; Object.keys(porGeo).forEach(g=>{ porCod[codGeo[g]] = {nome:g, valores:porGeo[g]}; });
-  return {periodos, series, g0, valores0, porCod, designacao: raiz.IndicadorDsg || null, dims: dimsTexto || null,
+  const desag = calcularDesagregacao(ficheiro, periodos, raiz.IndicadorDsg);
+  return {periodos, series, g0, valores0, porCod, desag, designacao: raiz.IndicadorDsg || null, dims: dimsTexto || null,
           recolha: ficheiro && ficheiro._recolha ? ficheiro._recolha : null};
 }
 function aplicarResposta(resposta, i, ficheiro){
   const r = calcularSeries(resposta, ficheiro);
   desenharDetalhe(r.periodos, r.series, false);
   preencherTabela(r.periodos, r.valores0, r.g0);
-  cacheSeries[i.id] = {rotulos:r.periodos, valores:r.valores0, real:true, geo:r.g0, recolha:r.recolha, series:r.series, dims:r.dims, porCod:r.porCod};
+  cacheSeries[i.id] = {rotulos:r.periodos, valores:r.valores0, real:true, geo:r.g0, recolha:r.recolha, series:r.series, dims:r.dims, porCod:r.porCod, desag:r.desag, designacao:r.designacao};
   desenharMapa(r.porCod, r.periodos, i);
-  if (r.designacao) document.getElementById('painel-titulo').textContent = r.designacao;
+  if (r.designacao) document.getElementById('painel-titulo').textContent = tituloCurto(r.designacao);
+  montarDesagregacao(cacheSeries[i.id]);
 }
 /* Pré-carrega, ao abrir a página, as séries reais já recolhidas para o repositório */
 async function precarregarReais(){
@@ -952,7 +984,7 @@ async function precarregarReais(){
     try {
       const r = await fetch(`data/dados_${i.varcd}.json`, {cache:'no-store'}); if (!r.ok) return;
       const j = await r.json(); const c = calcularSeries(j.resposta || j, j);
-      cacheSeries[i.id] = {rotulos:c.periodos, valores:c.valores0, real:true, geo:c.g0, recolha:c.recolha, series:c.series, designacao:c.designacao, dims:c.dims, porCod:c.porCod};
+      cacheSeries[i.id] = {rotulos:c.periodos, valores:c.valores0, real:true, geo:c.g0, recolha:c.recolha, series:c.series, designacao:c.designacao, dims:c.dims, porCod:c.porCod, desag:c.desag};
       if (c.recolha && (!ultima || c.recolha > ultima)) ultima = c.recolha;
     } catch(_){}
   }));
@@ -973,6 +1005,26 @@ function caminho(f){
   return polys.map(poly=>poly.map(anel=>'M'+anel.map(([lo,la])=>projetar(lo,la,CAIXA_CONT).join(',')).join('L')+'Z').join('')).join('');
 }
 function corEscala(t){ const a=[228,239,233], b=[31,115,91]; return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`; }
+function montarDesagregacao(s){
+  const barra = document.getElementById('desag-barra');
+  const opcoes = [];
+  const variasGeo = !!(s && s.real && s.series && s.series.length > 1);
+  opcoes.push({id:'geo', nome: variasGeo ? 'Localização' : 'Total'});
+  (s && s.desag || []).forEach(d=>opcoes.push({id:d.dim, nome:d.nome}));
+  if (!variasGeo && opcoes.length < 2){ barra.style.display='none'; barra.innerHTML=''; return; }
+  if (opcoes.length < 2){ barra.style.display='none'; barra.innerHTML=''; return; }
+  barra.style.display='';
+  barra.innerHTML = 'Desagregar por: ' + opcoes.map((o,k)=>`<button data-d="${o.id}" class="${k===0?'ativo':''}">${o.nome}</button>`).join('');
+  barra.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    barra.querySelectorAll('button').forEach(x=>x.classList.toggle('ativo', x===b));
+    const est = document.getElementById('estado-api');
+    const base = est.dataset.base || est.textContent; est.dataset.base = base;
+    if (b.dataset.d==='geo'){ desenharDetalhe(s.rotulos, s.series, false); est.textContent = base; return; }
+    const d = s.desag.find(x=>x.dim===b.dataset.d);
+    desenharDetalhe(s.rotulos, d.series, false);
+    est.textContent = `Dados reais do INE${s.recolha ? ' (recolha do repositório em '+s.recolha+')' : ''} · Portugal · por ${d.nome.toLowerCase()} · restantes dimensões no total.`;
+  });
+}
 function formatarValor(v){ return v==null ? 'n.d.' : (Math.abs(v)>=1000 ? Math.round(v).toLocaleString('pt-PT') : String(Math.round(v*100)/100).replace('.',',')); }
 /* Constrói o mapa NUTS II; devolve null se o indicador não tiver pelo menos 3 regiões NUTS II */
 function mapaSVG(porCod, periodos){
@@ -1060,7 +1112,7 @@ function iniciarTema(){
 function abrirDrill(tipo){
   const t = document.getElementById('drill-titulo'), s = document.getElementById('drill-sub'),
         c = document.getElementById('drill-corpo');
-  const linhaInd = i => `<tr><td>${i.nome}</td><td>${areaNome(i.area)}</td>
+  const linhaInd = i => `<tr><td>${tituloInd(i)}</td><td>${areaNome(i.area)}</td>
     <td>${i.varcd ? '<span class="badge-api ok">'+i.varcd+'</span>' : '<span class="badge-api pendente">por configurar</span>'}</td></tr>`;
   if (tipo==='indicadores'){
     const lst = aplicarFiltros();
@@ -1215,7 +1267,7 @@ function renderTiles(){
     const el = document.createElement('div'); el.className='tile';
     const canvasId = 'tile-c-'+ix;
     let titulo='', demo=true;
-    if (tl.tipo==='indicador'){ const i = porId(tl.id); titulo = `${areaNome(i.area)} — ${i.nome}`; demo = !serieAtiva(i.id).real; }
+    if (tl.tipo==='indicador'){ const i = porId(tl.id); titulo = `${areaNome(i.area)} — ${tituloInd(i)}`; demo = !serieAtiva(i.id).real; }
     if (tl.tipo==='composto'){ titulo = `Índice: ${tl.nome} (${areaNome(tl.area)})`; demo = tl.demo; }
     if (tl.tipo==='cruzamento'){ titulo = `Cruzamento: ${porId(tl.a).nome} × ${porId(tl.b).nome} (r=${tl.r})`; demo = tl.demo; }
     if (tl.tipo==='indicador'){ renderTileIndicador(el, tl, ix, titulo, demo); cont.appendChild(el); return; }
