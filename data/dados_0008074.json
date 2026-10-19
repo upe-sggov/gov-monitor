@@ -1,5 +1,5 @@
 {
- "_recolha": "2026-09-29",
+ "_recolha": "2026-10-19",
  "varcd": "0008074",
  "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0008074&lang=PT&Dim1=S7A2011&Dim3=T",
  "_ordem_periodos": [
@@ -19,12 +19,710 @@
  "_totais": {
   "dim_3": "T"
  },
+ "_desagregado": {
+  "2011": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "1,5",
+    "valor": "1.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "1,6",
+    "valor": "1.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "2,2",
+    "valor": "2.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "5,5",
+    "valor": "5.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,8",
+    "valor": "5.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "21,7",
+    "valor": "21.7"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "39,3",
+    "valor": "39.3"
+   }
+  ],
+  "2012": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "1,4",
+    "valor": "1.4"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "1,5",
+    "valor": "1.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "2,4",
+    "valor": "2.4"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "4,6",
+    "valor": "4.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,4",
+    "valor": "5.4"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "20,9",
+    "valor": "20.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "38,5",
+    "valor": "38.5"
+   }
+  ],
+  "2013": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "1,2",
+    "valor": "1.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "1,3",
+    "valor": "1.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "2,4",
+    "valor": "2.4"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "4,3",
+    "valor": "4.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,3",
+    "valor": "5.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "19,3",
+    "valor": "19.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "36,0",
+    "valor": "36"
+   }
+  ],
+  "2014": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "0,9",
+    "valor": "0.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "1,2",
+    "valor": "1.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "2,0",
+    "valor": "2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "4,0",
+    "valor": "4"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,3",
+    "valor": "5.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "18,5",
+    "valor": "18.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "33,8",
+    "valor": "33.8"
+   }
+  ],
+  "2015": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "1,0",
+    "valor": "1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "1,2",
+    "valor": "1.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "2,2",
+    "valor": "2.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "3,6",
+    "valor": "3.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,1",
+    "valor": "5.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "17,9",
+    "valor": "17.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "34,3",
+    "valor": "34.3"
+   }
+  ],
+  "2016": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "0,9",
+    "valor": "0.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "1,0",
+    "valor": "1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "2,0",
+    "valor": "2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "3,2",
+    "valor": "3.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,1",
+    "valor": "5.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "16,6",
+    "valor": "16.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "32,0",
+    "valor": "32"
+   }
+  ],
+  "2017": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "0,9",
+    "valor": "0.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "0,9",
+    "valor": "0.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "1,9",
+    "valor": "1.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "3,2",
+    "valor": "3.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,2",
+    "valor": "5.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "16,5",
+    "valor": "16.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "33,1",
+    "valor": "33.1"
+   }
+  ],
+  "2018": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "0,8",
+    "valor": "0.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "0,9",
+    "valor": "0.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "1,8",
+    "valor": "1.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "3,3",
+    "valor": "3.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,1",
+    "valor": "5.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "16,5",
+    "valor": "16.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "32,2",
+    "valor": "32.2"
+   }
+  ],
+  "2019": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "0,9",
+    "valor": "0.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "0,9",
+    "valor": "0.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "1,6",
+    "valor": "1.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "3,0",
+    "valor": "3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,4",
+    "valor": "5.4"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "16,6",
+    "valor": "16.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "32,3",
+    "valor": "32.3"
+   }
+  ],
+  "2020": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "0,7",
+    "valor": "0.7"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "1,2",
+    "valor": "1.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "1,3",
+    "valor": "1.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "2,9",
+    "valor": "2.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "4,7",
+    "valor": "4.7"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "14,7",
+    "valor": "14.7"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "28,7",
+    "valor": "28.7"
+   }
+  ],
+  "2021": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "0,6",
+    "valor": "0.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "1,4",
+    "valor": "1.4"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "1,5",
+    "valor": "1.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "2,8",
+    "valor": "2.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "4,6",
+    "valor": "4.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "14,3",
+    "valor": "14.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "28,4",
+    "valor": "28.4"
+   }
+  ],
+  "2022": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "Furto/roubo por esticão e na via pública",
+    "ind_string": "0,6",
+    "valor": "0.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "5",
+    "dim_3_t": "Condução sem habilitação legal",
+    "ind_string": "1,3",
+    "valor": "1.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "4",
+    "dim_3_t": "Condução de veículo com taxa de álcool igual ou superior a 1,2g/l",
+    "ind_string": "2,0",
+    "valor": "2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "3",
+    "dim_3_t": "Furto de veículo e em veículo motorizado",
+    "ind_string": "2,7",
+    "valor": "2.7"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "Crimes contra a integridade física",
+    "ind_string": "5,1",
+    "valor": "5.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "6",
+    "dim_3_t": "Crimes contra o património",
+    "ind_string": "15,9",
+    "valor": "15.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "Total",
+    "ind_string": "31,5",
+    "valor": "31.5"
+   }
+  ]
+ },
  "resposta": [
   {
    "IndicadorCod": "0008074",
    "IndicadorDsg": "Taxa de criminalidade (‰) por Localização geográfica (NUTS - 2013) e Categoria de crime; Anual - Direcção-Geral da Política de Justiça",
    "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0008074&lingua=PT",
-   "DataExtracao": "2026-09-30T00:58:32.933+01:00",
+   "DataExtracao": "2026-10-19T14:46:15.456+01:00",
    "DataUltimoAtualizacao": "2026-06-30",
    "UltimoPref": "2022",
    "Dados": {

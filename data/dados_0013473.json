@@ -1,5 +1,5 @@
 {
- "_recolha": "2026-09-29",
+ "_recolha": "2026-10-19",
  "varcd": "0013473",
  "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0013473&lang=PT&Dim1=S16A20202022",
  "_ordem_periodos": [
@@ -8,12 +8,13 @@
   "2022 - 2024"
  ],
  "_totais": {},
+ "_desagregado": {},
  "resposta": [
   {
    "IndicadorCod": "0013473",
    "IndicadorDsg": "Esperança de vida à nascença (Metodologia 2007 - Anos) por Local de residência (NUTS - 2024); Anual - INE, Tábuas completas de mortalidade",
    "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0013473&lingua=PT",
-   "DataExtracao": "2026-09-30T01:00:11.889+01:00",
+   "DataExtracao": "2026-10-19T14:49:51.922+01:00",
    "DataUltimoAtualizacao": "2025-09-26",
    "UltimoPref": "2022 - 2024",
    "Dados": {

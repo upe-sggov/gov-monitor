@@ -1,5 +1,5 @@
 {
- "_recolha": "2026-09-29",
+ "_recolha": "2026-10-19",
  "varcd": "0012136",
  "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0012136&lang=PT&Dim1=S5A20223&Dim3=T",
  "_ordem_periodos": [
@@ -23,12 +23,430 @@
  "_totais": {
   "dim_3": "T"
  },
+ "_desagregado": {
+  "3.º Trimestre de 2022": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,3",
+    "valor": "5.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "5,9",
+    "valor": "5.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,5",
+    "valor": "6.5"
+   }
+  ],
+  "4.º Trimestre de 2022": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "6,2",
+    "valor": "6.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,7",
+    "valor": "6.7"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "7,1",
+    "valor": "7.1"
+   }
+  ],
+  "1.º Trimestre de 2023": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "6,9",
+    "valor": "6.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "7,2",
+    "valor": "7.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "7,5",
+    "valor": "7.5"
+   }
+  ],
+  "2.º Trimestre de 2023": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,8",
+    "valor": "5.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,1",
+    "valor": "6.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,4",
+    "valor": "6.4"
+   }
+  ],
+  "3.º Trimestre de 2023": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,6",
+    "valor": "5.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,1",
+    "valor": "6.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,7",
+    "valor": "6.7"
+   }
+  ],
+  "4.º Trimestre de 2023": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "6,3",
+    "valor": "6.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,6",
+    "valor": "6.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,8",
+    "valor": "6.8"
+   }
+  ],
+  "1.º Trimestre de 2024": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "6,2",
+    "valor": "6.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,8",
+    "valor": "6.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "7,5",
+    "valor": "7.5"
+   }
+  ],
+  "2.º Trimestre de 2024": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,7",
+    "valor": "5.7"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,1",
+    "valor": "6.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,5",
+    "valor": "6.5"
+   }
+  ],
+  "3.º Trimestre de 2024": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,8",
+    "valor": "5.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,1",
+    "valor": "6.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,5",
+    "valor": "6.5"
+   }
+  ],
+  "4.º Trimestre de 2024": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "6,5",
+    "valor": "6.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,7",
+    "valor": "6.7"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,9",
+    "valor": "6.9"
+   }
+  ],
+  "1.º Trimestre de 2025": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "6,2",
+    "valor": "6.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,6",
+    "valor": "6.6"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "7,0",
+    "valor": "7"
+   }
+  ],
+  "2.º Trimestre de 2025": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,3",
+    "valor": "5.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "5,9",
+    "valor": "5.9"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,5",
+    "valor": "6.5"
+   }
+  ],
+  "3.º Trimestre de 2025": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,4",
+    "valor": "5.4"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "5,8",
+    "valor": "5.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,2",
+    "valor": "6.2"
+   }
+  ],
+  "4.º Trimestre de 2025": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,2",
+    "valor": "5.2"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "5,8",
+    "valor": "5.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,3",
+    "valor": "6.3"
+   }
+  ],
+  "1.º Trimestre de 2026": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,5",
+    "valor": "5.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "6,1",
+    "valor": "6.1"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,8",
+    "valor": "6.8"
+   }
+  ],
+  "2.º Trimestre de 2026": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "4,8",
+    "valor": "4.8"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "5,3",
+    "valor": "5.3"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "5,7",
+    "valor": "5.7"
+   }
+  ]
+ },
  "resposta": [
   {
    "IndicadorCod": "0012136",
    "IndicadorDsg": "Taxa de desemprego (Série 2021 - %) por Local de residência (NUTS - 2024) e Sexo; Trimestral - INE, Inquérito ao emprego (Série - 2021)",
    "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0012136&lingua=PT",
-   "DataExtracao": "2026-09-30T00:58:59.597+01:00",
+   "DataExtracao": "2026-10-19T14:47:10.331+01:00",
    "DataUltimoAtualizacao": "2026-08-05",
    "UltimoPref": "2.º Trimestre de 2026",
    "Dados": {
