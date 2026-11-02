@@ -1,5 +1,5 @@
 {
- "_recolha": "2026-10-26",
+ "_recolha": "2026-11-02",
  "varcd": "0012136",
  "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0012136&lang=PT&Dim1=S5A20223&Dim3=T",
  "_ordem_periodos": [
@@ -446,7 +446,7 @@
    "IndicadorCod": "0012136",
    "IndicadorDsg": "Taxa de desemprego (Série 2021 - %) por Local de residência (NUTS - 2024) e Sexo; Trimestral - INE, Inquérito ao emprego (Série - 2021)",
    "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0012136&lingua=PT",
-   "DataExtracao": "2026-10-26T13:35:34.219Z",
+   "DataExtracao": "2026-11-02T16:35:49.621Z",
    "DataUltimoAtualizacao": "2026-08-05",
    "UltimoPref": "2.º Trimestre de 2026",
    "Dados": {
