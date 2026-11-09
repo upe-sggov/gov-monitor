@@ -1,9 +1,8 @@
 {
- "_recolha": "2026-11-02",
+ "_recolha": "2026-11-09",
  "varcd": "0012136",
- "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0012136&lang=PT&Dim1=S5A20223&Dim3=T",
+ "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0012136&lang=PT&Dim1=S5A20224&Dim3=T",
  "_ordem_periodos": [
-  "3.º Trimestre de 2022",
   "4.º Trimestre de 2022",
   "1.º Trimestre de 2023",
   "2.º Trimestre de 2023",
@@ -18,38 +17,13 @@
   "3.º Trimestre de 2025",
   "4.º Trimestre de 2025",
   "1.º Trimestre de 2026",
-  "2.º Trimestre de 2026"
+  "2.º Trimestre de 2026",
+  "3.º Trimestre de 2026"
  ],
  "_totais": {
   "dim_3": "T"
  },
  "_desagregado": {
-  "3.º Trimestre de 2022": [
-   {
-    "geocod": "PT",
-    "geodsg": "Portugal",
-    "dim_3": "1",
-    "dim_3_t": "H",
-    "ind_string": "5,3",
-    "valor": "5.3"
-   },
-   {
-    "geocod": "PT",
-    "geodsg": "Portugal",
-    "dim_3": "T",
-    "dim_3_t": "HM",
-    "ind_string": "5,9",
-    "valor": "5.9"
-   },
-   {
-    "geocod": "PT",
-    "geodsg": "Portugal",
-    "dim_3": "2",
-    "dim_3_t": "M",
-    "ind_string": "6,5",
-    "valor": "6.5"
-   }
-  ],
   "4.º Trimestre de 2022": [
    {
     "geocod": "PT",
@@ -439,6 +413,32 @@
     "ind_string": "5,7",
     "valor": "5.7"
    }
+  ],
+  "3.º Trimestre de 2026": [
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "ind_string": "5,0",
+    "valor": "5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "T",
+    "dim_3_t": "HM",
+    "ind_string": "5,5",
+    "valor": "5.5"
+   },
+   {
+    "geocod": "PT",
+    "geodsg": "Portugal",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "ind_string": "6,1",
+    "valor": "6.1"
+   }
   ]
  },
  "resposta": [
@@ -446,134 +446,10 @@
    "IndicadorCod": "0012136",
    "IndicadorDsg": "Taxa de desemprego (Série 2021 - %) por Local de residência (NUTS - 2024) e Sexo; Trimestral - INE, Inquérito ao emprego (Série - 2021)",
    "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0012136&lingua=PT",
-   "DataExtracao": "2026-11-02T16:35:49.621Z",
-   "DataUltimoAtualizacao": "2026-08-05",
-   "UltimoPref": "2.º Trimestre de 2026",
+   "DataExtracao": "2026-11-09T16:54:33.497Z",
+   "DataUltimoAtualizacao": "2026-11-04",
+   "UltimoPref": "3.º Trimestre de 2026",
    "Dados": {
-    "3.º Trimestre de 2022": [
-     {
-      "geocod": "19",
-      "geodsg": "Centro",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "3,7 §",
-      "valor": "3.7"
-     },
-     {
-      "geocod": "1C",
-      "geodsg": "Alentejo",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "4,4 §",
-      "valor": "4.4"
-     },
-     {
-      "geocod": "15",
-      "geodsg": "Algarve",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "4,6 §",
-      "valor": "4.6"
-     },
-     {
-      "geocod": "1D",
-      "geodsg": "Oeste e Vale do Tejo",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "5,2 §",
-      "valor": "5.2"
-     },
-     {
-      "geocod": "11",
-      "geodsg": "Norte",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "ind_string": "5,8",
-      "valor": "5.8"
-     },
-     {
-      "geocod": "1",
-      "geodsg": "Continente",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "ind_string": "5,9",
-      "valor": "5.9"
-     },
-     {
-      "geocod": "PT",
-      "geodsg": "Portugal",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "ind_string": "5,9",
-      "valor": "5.9"
-     },
-     {
-      "geocod": "2",
-      "geodsg": "Região Autónoma dos Açores",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "6,1 §",
-      "valor": "6.1"
-     },
-     {
-      "geocod": "20",
-      "geodsg": "Região Autónoma dos Açores",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "6,1 §",
-      "valor": "6.1"
-     },
-     {
-      "geocod": "3",
-      "geodsg": "Região Autónoma da Madeira",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "6,1 §",
-      "valor": "6.1"
-     },
-     {
-      "geocod": "30",
-      "geodsg": "Região Autónoma da Madeira",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "6,1 §",
-      "valor": "6.1"
-     },
-     {
-      "geocod": "1A",
-      "geodsg": "Grande Lisboa",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "ind_string": "6,6",
-      "valor": "6.6"
-     },
-     {
-      "geocod": "1B",
-      "geodsg": "Península de Setúbal",
-      "dim_3": "T",
-      "dim_3_t": "HM",
-      "sinal_conv": "§",
-      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
-      "ind_string": "11,1 §",
-      "valor": "11.1"
-     }
-    ],
     "4.º Trimestre de 2022": [
      {
       "geocod": "1C",
@@ -2406,6 +2282,130 @@
       "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
       "ind_string": "7,4 §",
       "valor": "7.4"
+     }
+    ],
+    "3.º Trimestre de 2026": [
+     {
+      "geocod": "15",
+      "geodsg": "Algarve",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "4,0 §",
+      "valor": "4"
+     },
+     {
+      "geocod": "3",
+      "geodsg": "Região Autónoma da Madeira",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "4,0 §",
+      "valor": "4"
+     },
+     {
+      "geocod": "30",
+      "geodsg": "Região Autónoma da Madeira",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "4,0 §",
+      "valor": "4"
+     },
+     {
+      "geocod": "2",
+      "geodsg": "Região Autónoma dos Açores",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "4,3 §",
+      "valor": "4.3"
+     },
+     {
+      "geocod": "20",
+      "geodsg": "Região Autónoma dos Açores",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "4,3 §",
+      "valor": "4.3"
+     },
+     {
+      "geocod": "1D",
+      "geodsg": "Oeste e Vale do Tejo",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "4,5 §",
+      "valor": "4.5"
+     },
+     {
+      "geocod": "19",
+      "geodsg": "Centro",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "4,6 §",
+      "valor": "4.6"
+     },
+     {
+      "geocod": "1C",
+      "geodsg": "Alentejo",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "4,8 §",
+      "valor": "4.8"
+     },
+     {
+      "geocod": "PT",
+      "geodsg": "Portugal",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "ind_string": "5,5",
+      "valor": "5.5"
+     },
+     {
+      "geocod": "1",
+      "geodsg": "Continente",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "ind_string": "5,6",
+      "valor": "5.6"
+     },
+     {
+      "geocod": "1A",
+      "geodsg": "Grande Lisboa",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "ind_string": "6,0",
+      "valor": "6"
+     },
+     {
+      "geocod": "11",
+      "geodsg": "Norte",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "ind_string": "6,2",
+      "valor": "6.2"
+     },
+     {
+      "geocod": "1B",
+      "geodsg": "Península de Setúbal",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "sinal_conv": "§",
+      "sinal_conv_desc": "Desvio do padrão de qualidade/Coeficiente de variação elevado",
+      "ind_string": "6,3 §",
+      "valor": "6.3"
      }
     ]
    },

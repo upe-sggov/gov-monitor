@@ -1,5 +1,5 @@
 {
- "_recolha": "2026-11-02",
+ "_recolha": "2026-11-09",
  "varcd": "0014767",
  "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0014767&lang=PT",
  "_ordem_periodos": [
@@ -12,7 +12,7 @@
    "IndicadorCod": "0014767",
    "IndicadorDsg": "Índice de preços da habitação (Taxa de variação homóloga - Base 2025 - %) por Categoria do alojamento familiar; Trimestral - INE, Índice de preços da habitação",
    "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0014767&lingua=PT",
-   "DataExtracao": "2026-11-02T17:04:25.361Z",
+   "DataExtracao": "2026-11-09T17:21:18.419Z",
    "DataUltimoAtualizacao": "2026-09-22",
    "UltimoPref": "2.º Trimestre de 2026",
    "Dados": {
