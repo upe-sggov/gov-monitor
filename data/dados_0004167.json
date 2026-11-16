@@ -1,5 +1,5 @@
 {
- "_recolha": "2026-11-09",
+ "_recolha": "2026-11-16",
  "varcd": "0004167",
  "url": "https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd=0004167&lang=PT&Dim1=S7A2014&Dim3=T&Dim4=T",
  "_ordem_periodos": [
@@ -10,6 +10,7 @@
   "2018",
   "2019",
   "2020",
+  "2021",
   "2022",
   "2023",
   "2024",
@@ -2570,7 +2571,7 @@
    "IndicadorCod": "0004167",
    "IndicadorDsg": "População residente (N.º) por Local de residência, Sexo e Grupo etário (Por ciclos de vida); Anual - INE, Estimativas anuais da população residente",
    "MetaInfUrl": "https://www.ine.pt/bddXplorer/htdocs/minfo.jsp?var_cd=0004167&lingua=PT",
-   "DataExtracao": "2026-11-09T16:59:56.135Z",
+   "DataExtracao": "2026-11-16T16:22:47.112Z",
    "DataUltimoAtualizacao": "2026-06-22",
    "UltimoPref": "2025",
    "Dados": {
@@ -4126,6 +4127,228 @@
       "dim_4_t": "Total",
       "ind_string": "10 394 297",
       "valor": "10394297"
+     }
+    ],
+    "2021": [
+     {
+      "geocod": "12",
+      "geodsg": "Portalegre",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "106 510",
+      "valor": "106510"
+     },
+     {
+      "geocod": "04",
+      "geodsg": "Bragança",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "121 704",
+      "valor": "121704"
+     },
+     {
+      "geocod": "09",
+      "geodsg": "Guarda",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "138 693",
+      "valor": "138693"
+     },
+     {
+      "geocod": "02",
+      "geodsg": "Beja",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "154 671",
+      "valor": "154671"
+     },
+     {
+      "geocod": "07",
+      "geodsg": "Évora",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "155 713",
+      "valor": "155713"
+     },
+     {
+      "geocod": "05",
+      "geodsg": "Castelo Branco",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "178 219",
+      "valor": "178219"
+     },
+     {
+      "geocod": "17",
+      "geodsg": "Vila Real",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "183 409",
+      "valor": "183409"
+     },
+     {
+      "geocod": "16",
+      "geodsg": "Viana do Castelo",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "230 770",
+      "valor": "230770"
+     },
+     {
+      "geocod": "2",
+      "geodsg": "Região Autónoma dos Açores",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "241 026",
+      "valor": "241026"
+     },
+     {
+      "geocod": "3",
+      "geodsg": "Região Autónoma da Madeira",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "253 129",
+      "valor": "253129"
+     },
+     {
+      "geocod": "18",
+      "geodsg": "Viseu",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "347 053",
+      "valor": "347053"
+     },
+     {
+      "geocod": "06",
+      "geodsg": "Coimbra",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "414 325",
+      "valor": "414325"
+     },
+     {
+      "geocod": "14",
+      "geodsg": "Santarém",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "431 135",
+      "valor": "431135"
+     },
+     {
+      "geocod": "10",
+      "geodsg": "Leiria",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "471 138",
+      "valor": "471138"
+     },
+     {
+      "geocod": "08",
+      "geodsg": "Faro",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "507 930",
+      "valor": "507930"
+     },
+     {
+      "geocod": "01",
+      "geodsg": "Aveiro",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "709 034",
+      "valor": "709034"
+     },
+     {
+      "geocod": "03",
+      "geodsg": "Braga",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "846 556",
+      "valor": "846556"
+     },
+     {
+      "geocod": "15",
+      "geodsg": "Setúbal",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "899 866",
+      "valor": "899866"
+     },
+     {
+      "geocod": "13",
+      "geodsg": "Porto",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "1 806 871",
+      "valor": "1806871"
+     },
+     {
+      "geocod": "11",
+      "geodsg": "Lisboa",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "2 401 365",
+      "valor": "2401365"
+     },
+     {
+      "geocod": "1",
+      "geodsg": "Continente",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "10 104 962",
+      "valor": "10104962"
+     },
+     {
+      "geocod": "PT",
+      "geodsg": "Portugal",
+      "dim_3": "T",
+      "dim_3_t": "HM",
+      "dim_4": "T",
+      "dim_4_t": "Total",
+      "ind_string": "10 599 117",
+      "valor": "10599117"
      }
     ],
     "2022": [
